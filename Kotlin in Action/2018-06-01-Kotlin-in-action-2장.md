@@ -1,5 +1,5 @@
 # 2장. 코틀린 기초
-## 2.1 기본 요소: 함수와 변수
+# 2.1 기본 요소: 함수와 변수
 코틀린이 왜 불변 데이터 사용을 장려하는지 배워보자.
 
 ## 2.1.1 Hello World
@@ -585,4 +585,75 @@ val percentage =
 ```
 
 ## 2.5.1 try, catch, finally
+
+_BufferedReader.close_ 는 _IOException_ 을 던질 수 있는데, 예외 처리를 반드시 해주어야 한다. 하지만 실제 스트림을 닫다가 실패하는 경우에 클라이언트 프로그램이 특별히 할 수 있는 동작이 없으므로 이 _IOException_ 을 잡아내는 코드는 불필요하다.  
+
+```kotlin
+fun readNumber(reader: BufferedReader):Int? {
+// 함수가 던질 수 있는 예외를 명시할 필요가 있다.
+    try{
+        val line = reader.readLine()
+        return Integer.parseInt(line)
+    }catch(e: NumberFormatException){
+        return null
+    }finally{
+        reader.close()
+    }
+}
+```
+
+코틀린은 **체크 예외**(checked exception)와 **언체크 예외**(unchecked exception)를 구별하지 않는다.  
+실제 자바 프로그래머들이 체크 예외를 사용하는 방식을 고려해 설계했음.  
+코틀린에서는 함수가 던지는 예외를 지정하지 않고, 발생한 예외 처리 해도 되고 안해도 됨.
+
+
+_try-with-resource_ 는 어떨까? 코틀린이 특별히 문법을 제공하지는 않지만, 8.2.5절에서 라이브러리 함수로 같은 기능을 구현하는 방법을 살펴본다.
+
+## 2.5.2 try를 식으로 사용
+
+코틀린으 **try** 키워드는 if, when과 마찬가지로 **식**이다.  
+if와 달리 반드시 try의 본문은 중괄호{}로 감싸줘야 한다.
+
+```kotlin
+fun readNumber(reader: BufferedReader){
+    val number = try{
+        Integer.parseInt(reader.readLine()) // 결과값이 try의 값
+    }catch(e: NumberFormatException){
+        return
+    }
+    println(number)
+}
+```
+이 예제는 *catch* 안에서 *return*을 사용한다. 따라서 예외가 발생한 경우 catch블럭 다음은 실행되지 않는다. 계속 하고 싶다면 아래의 방법 사용. 
+
+```kotlin
+fun readNumber(reader: BufferedReader){
+    val number = try{
+        Integer.parseInt(reader.readLine()) // 예외가 발생하지 않으면 이 값을 사용.
+    }catch(e: NumberFormatException){
+        null // 예외가 발생하면 null값을 사용
+    }
+    println(number)
+}
+```
+
+# 2.6 요약
+
+- **fun** : 함수 정의  
+**val** : 읽기 전용 변수  
+**var** : 변경 가능 변수
+- 문자열 템플릿 : **$변수이름** 또는 **${식}**
+- 값 객체 클래스를 간결하게 표현 가능하다.
+- **if** 는 식이며, 값을 만들어낸다.
+- **when** 은 자바의 switch와 비슷하지만 더 강력하다. 
+- 어떤 변수의 타입을 검사하고 나면 컴파일러가 **스마트 캐스트** 를 활용해 자동으로 타입을 바꿔준다.
+- **for**은 맵의 이터레이션, 컬렉션 이터레이션 시 자바보다 편리하다.
+- 1..5와 같은 식은 범위를 만들어낸다.  
+**in** : 범위 안에 있는지 검사  
+**!in** : 범위 안에 없는지 검사
+- 함수가 던질 수 있는 예외를 선언하지 않아도 된다.
+
+
+
+
 
