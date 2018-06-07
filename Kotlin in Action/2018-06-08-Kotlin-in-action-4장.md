@@ -521,7 +521,8 @@ class Client(val name: String, val postalCode: Int)
 ```
 ### 문자열 표현: toString()
 기본 제공되는 문자열 표현은 `Client@5e9f23b4`같은 방식인데,  
-이 기본 구현을 바꾸려면 toString메소드를 오버라이드해야 한다.
+이 기본 구현을 바꾸려면 toString메소드를 오버라이드해야 한다.  
+
 ```kotlin
 class Client(val name: String, val postalCode: Int){
 
@@ -532,7 +533,8 @@ class Client(val name: String, val postalCode: Int){
 ### 객체의 동등성: equals()
 > 동등성 연산에 == 를 사용함.
 코틀린에서는 == 연산자는 내부적으로 equals를 호출해서 객체를 비교한다.  
-참조 비교를 위해서는 === 연산자를 사용할 수 있다.
+참조 비교를 위해서는 === 연산자를 사용할 수 있다.  
+
 ```kotlin
 class Client(val name: String, val postalCode: Int){
 
@@ -581,7 +583,8 @@ data class Client(val name: String, val postalCode: Int)
 ### 데이터 클래스와 불변성: copy() 메소드
 val인 프로퍼티를 사용해 불변 클래스로 만드는 것을 권장한다. (HashMap, 다중스레드 사용시 편리)
 
-코틀린 컴파일러는 객체를 복사하면서 일부 프로퍼티를 바꿀 수 있게 해주는 **copy** 메소드를 제공한다. 복사본을 수정/삭제 해도 원본을 참조하는 다른 부분에는 영행을 끼치지 않는다. 
+코틀린 컴파일러는 객체를 복사하면서 일부 프로퍼티를 바꿀 수 있게 해주는 **copy** 메소드를 제공한다. 복사본을 수정/삭제 해도 원본을 참조하는 다른 부분에는 영행을 끼치지 않는다.   
+
 ```kotlin
 val lee = Client("이영주",1234)
 println(lee.copy(postalCode=4000))
