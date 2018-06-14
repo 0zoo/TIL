@@ -105,15 +105,50 @@ this@OuterClass.toString()
 
 ```kotlin
 // apply를 사용한 알파벳 만들기
-
 fun alphabet() = StringBuilder().apply{ 
-        for(letter in 'A'..'Z'){
-            append(letter)
-        }
-        append(".")
-    }.toString()
+    for(letter in 'A'..'Z'){
+        append(letter)
+    }
+    append(".")
+}.toString()
+```
+- apply는 확장 함수로 정의되어 있다.  
+위 예제에서 apply를 실행한 결과는 StringBuilder 객체이다.
+
+- apply 함수는 객체의 인스턴스를 만들면서 즉시 프로퍼티 중 일부를 초기화해야 하는 경우에 유용하다.
+
+```kotlin
+// apply를 TextView 초기화에 사용하기
+fun createView(context: Context) = 
+    TextView(context).apply{
+    // 이 안에서 TextView가 수신 객체
+    // 따라서 TextView의 메소드 호출, 프로퍼티 설정 가능.
+        text = "Sample text"
+        textSize = 20.0
+        setPadding(10,0,0,0)
+    }
+```
+
+--------
+### buildString 함수
+
+- buildString 함수는 StringBuilder 객체를 만드는 일과 toString을 호출해 주는 일을 자동으로 해준다.
+- buildString의 인자는 수신 객체 지정 람다.  
+수신 객체는 항상 StringBuilder
+
+```kotlin
+// buildString으로 알파벳 만들기
+fun alphabet() = buildString{ 
+    for(letter in 'A'..'Z'){
+        append(letter)
+    }
+    append(".")
 }
 ```
+
+--------
+
+
 
 
 
