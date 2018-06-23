@@ -214,47 +214,46 @@ byte형이 int형으로 확장 후 char형으로 축소 변환을 하게 된다.
 > 원래 값이 부호가 있는 자료형이라면 부호 확장이 일어나고,  
 char자료형은 0의 확장이 일어난다.
 
------
-여기부터 다시 정리하기
------
 
-byte -> char 인데 원래 byte값이 음수이기 때문에
-1111 1111 -> 1111 1111 1111 1111
-상위 자리에 1이 채워짐. 
+byte -> char 에서 원래 byte값이 음수이기 때문에  
+1111 1111 -> 1111 1111 1111 1111  
+상위 자리에 1이 채워짐.   
 
-따라서 byte를 char형으로 변환하게 되면
+따라서 byte를 char형으로 변환하게 되면  
 2^16-1 = 65535 가 나오게 된다.
 
-++ 만약 char자료형을 다른 자료형으로 바꿀 때 부호 확장을 원하지 않으면 **비트 마스크**를 사용하자.
+- 만약 char자료형을 다른 자료형으로 바꿀 때 부호 확장을 원하지 않으면 **비트 마스크**를 사용하자.
 
-- _비트 마스크(Bit Mask)_ : 원하는 비트값을 알고싶을 경우에 사용
-```
-	int i = c & 0xffff;
-```
+    - 비트 마스크(Bit Mask) : 원하는 비트값을 알고 싶을 경우에 사용
+    
+    ```java
+    int i = c & 0xffff;
+    ```
 
 ### Solution
+
 ```java
-    public class Multicast{
-        public static void main(String args[]){  
-				byte b = (byte) -1;
-				//char c = (char)b; //부호 확장 o
-				char c = (char) (b & 0xffff); //부호 확장 x
-				int i = (short)c; // short형은 char형처럼 16bit이면서 부호가 있다.
-				System.out.println(i);
-        }
+public class Multicast{
+    public static void main(String args[]){
+        byte b = (byte) -1;
+        //char c = (char)b; //부호 확장 o
+        char c = (char) (b & 0xffff); //부호 확장 x
+        int i = (short)c; 
+        // short형은 char형처럼 16bit이면서 부호가 있다.
+        System.out.println(i);
     }
+}
 ```
 
 ### 역자 퍼즐
 ```java
-    public class Multicast{
-        public static void main(String args[]){  
-				System.out.println((long)(int)(byte)-1);
-        }
+public class Multicast{
+    public static void main(String args[]{
+        System.out.println((long)(int)(byte)-1);
     }
+}
+// 결과값: - 1 
 ```
-
-결과값: - 1 
 
 1111 1111 1111 1111 1111 1111 1111 1111
 
@@ -266,17 +265,18 @@ long자료형 : 부호가 있고, 64bit (8byte)
 
 
 ## 7. 변수 교환
+
 ### Question
 ```java
-    public class CleverSwap{
-        public static void main(String args[]){
-				int x = 1984; // 0x7c0
-				int y = 2001; // 0x7d1
-				x ^= y ^= x ^= y;    
-            System.out.println(x);
-            System.out.println(y);
-        }
+public class CleverSwap{
+    public static void main(String args[]){
+        int x = 1984; // 0x7c0
+        int y = 2001; // 0x7d1
+        x ^= y ^= x ^= y;
+        System.out.println(x);
+        System.out.println(y);
     }
+}
 ```
 
 ### Solution
