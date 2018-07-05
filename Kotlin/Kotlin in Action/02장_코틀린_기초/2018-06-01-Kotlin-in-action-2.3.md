@@ -5,8 +5,8 @@ enum class Color{
     RED,ORANGE,YELLOW,GREEN,BLUE
 }
 ```
-enum은 자바 선언보다 코틀린 선언이 더 긴 흔치 않은 경우이다.
-코틀린에서 enum은 _soft keyword_라고 불린다.
+enum은 자바 선언보다 코틀린 선언이 더 긴 흔치 않은 경우이다.  
+코틀린에서 enum은 _soft keyword_ 라고 불린다.
 
 **enum**은 class앞에 있을 때는 특별한 의미를 지니지만, 다른 곳에서는 이름에 사용할 수 있다.
 
@@ -24,7 +24,7 @@ enum class Color(
     // enum클래스 안에서 메소드 정의
 } 
 ```
-enum 클래스 안에 메소드를 정의하는 경우, 반드시 enum 상수 목록과 메소드 정의 사이에 세미콜론(;)을 넣어야 한다.
+enum 클래스 안에 메소드를 정의하는 경우, 반드시 enum 상수 목록과 메소드 정의 사이에 세미콜론(`;`)을 넣어야 한다.
 
 ## 2.3.2 when으로 enum 클래스 다루기
 > 자바의 switch에 해당하는 코틀린의 구성요소는 **when**이다.  
