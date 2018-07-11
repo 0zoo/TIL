@@ -41,18 +41,10 @@ layout_width, layout_height 는 지정한 값
 
 ----
 
-
 ConstraintLayout 에서 뷰와 뷰를 연결할 때 사용하는 xml 속성:
-```xml
-<Button
-...
-
+```
 layout_constraint[소스뷰 연결점]_[타깃뷰 연결점]="[타깃뷰id]"
-
 app:layout_constraintTop_toBottomOf="@+id/imageView"
-
-...
-/>
 ```
 
 
