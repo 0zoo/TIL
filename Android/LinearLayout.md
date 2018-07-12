@@ -1,6 +1,6 @@
 # LinearLayout
 
-## anko 라이브러리를 사용해 kotlin으로 LinearLayout 구성하기
+## Anko 라이브러리를 사용해 kotlin으로 LinearLayout 구성하기
 ```kotlin
 val layout = LinearLayout(this)
 layout.orientation = LinearLayout.HORIZONTAL
