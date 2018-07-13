@@ -81,8 +81,9 @@ class SignInActivity : AppCompatActivity() {
     private fun getAccessToken(code: String) {
         Log.i(TAG, "getAccessToken: $code")
 
-        /*
         val call = authApi.getAccessToken(CLIENT_ID, CLIENT_SECRET, code)
+
+        /*
         call.enqueue(object : Callback<Auth> {
             override fun onFailure(call: Call<Auth>, t: Throwable) {
                 toast(t.message.toString())
@@ -95,7 +96,6 @@ class SignInActivity : AppCompatActivity() {
         })
         */
 
-        val call = authApi.getAccessToken(CLIENT_ID, CLIENT_SECRET, code)
         call.enqueue({
             it.body()?.let {
                 toast(it.toString())
