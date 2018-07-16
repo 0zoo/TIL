@@ -60,15 +60,16 @@ data class Auth(
 
 -----
 
-1. CLIENT_ID, CLIENT_SECRET 은 `companion object` 안에 `const`로 정의해 static 상수처럼 사용하자.
+1. CLIENT_ID, CLIENT_SECRET 은 `companion object` 안에 `const`로 정의해 static 상수처럼 사용하자.  
 
-2. onCreate  
-signInButton 버튼 클릭 -> 인터넷 브라우저를 실행하는 Intent 전달 (https://github.com/login/oauth/authorize?client_id=XXX) 
-    ```kotlin
-    // https://github.com/login/oauth/authorize?client_id=XXX
+2. onCreate 
 
-    signInButton.setOnClickListener {
-        val authUri = Uri.Builder().scheme("https")
+signInButton 버튼 클릭  
+-> 인터넷 브라우저를 실행하는 Intent 전달   (https://github.com/login/oauth/authorize?client_id=XXX) 
+
+```kotlin
+signInButton.setOnClickListener {
+    val authUri = Uri.Builder().scheme("https")
                     .authority("github.com")
                     .appendPath("login")
                     .appendPath("oauth")
@@ -76,12 +77,13 @@ signInButton 버튼 클릭 -> 인터넷 브라우저를 실행하는 Intent 전�
                     .appendQueryParameter("client_id", CLIENT_ID)
                     .build()
 
-        // 인터넷 브라우저를 실행하는 Intent
-        // => Custom Tabs: android-support-library
-        val intent = CustomTabsIntent.Builder().build()
-        intent.launchUrl(this,authUri)
-    }
-    ```
+    // 인터넷 브라우저를 실행하는 Intent
+    // => Custom Tabs: android-support-library
+    val intentBuilder = CustomTabsIntent.Builder()
+    //Open the Custom Tab
+    intentBuilder.build().launchUrl(this, authUri)
+}
+```
 
 3. `onNewIntent`를 그냥 사용할 경우,    
 결과를 받아와야 하는데 계속 새로운 화면이 뜨는 문제 발생함.
