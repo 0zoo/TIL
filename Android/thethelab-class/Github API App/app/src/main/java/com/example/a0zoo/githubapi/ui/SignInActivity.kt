@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.example.a0zoo.githubapi.R
 import com.example.a0zoo.githubapi.api.AuthApi
+import com.example.a0zoo.githubapi.api.authApi
+import com.example.a0zoo.githubapi.api.provideGithubApi
+import com.example.a0zoo.githubapi.api.updateToken
+import com.example.a0zoo.githubapi.utils.enqueue
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -25,14 +29,6 @@ class SignInActivity : AppCompatActivity() {
         const val CLIENT_ID = "2665b3d14a0c0fb47d25"
         const val CLIENT_SECRET = "1fb2914898c25210864d30120c30cb71bc49d33d"
     }
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    private val httpClient = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,21 +66,39 @@ class SignInActivity : AppCompatActivity() {
 
     }
 
-    val authApi: AuthApi = Retrofit.Builder().apply {
-        baseUrl("https://github.com/")
-        client(httpClient)
-        addConverterFactory(GsonConverterFactory.create())
-    }.build().create(AuthApi::class.java)
-
     private fun getAccessToken(code: String) {
-        Log.i(TAG, "getAccessToken: $code")
+        val call = authApi.getAccessToken(CLIENT_ID, CLIENT_SECRET, code)
+
+        call.enqueue({
+            it.body()?.let {
+                Log.i(TAG, it.toString())
+
+                updateToken(this, it.accessToken)
+
+                val githubApiCall = provideGithubApi(this).searchRepository("hello")
+                githubApiCall.enqueue({
+                    it.body()?.let {
+                        Log.i(TAG, "total_count: ${it.totalCount}")
+                        Log.i(TAG, it.items.toString())
+                    }
+
+                }, {
+
+                })
 
 
+            }
+        }, {
+            toast(it.message.toString())
+        })
 
 
     }
 
+
 }
+
+
 
 
 
