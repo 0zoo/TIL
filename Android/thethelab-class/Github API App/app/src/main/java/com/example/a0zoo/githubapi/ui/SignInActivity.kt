@@ -16,6 +16,7 @@ import com.example.a0zoo.githubapi.utils.enqueue
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -71,21 +72,14 @@ class SignInActivity : AppCompatActivity() {
 
         call.enqueue({
             it.body()?.let {
-                Log.i(TAG, it.toString())
 
                 updateToken(this, it.accessToken)
 
-                val githubApiCall = provideGithubApi(this).searchRepository("hello")
-                githubApiCall.enqueue({
-                    it.body()?.let {
-                        Log.i(TAG, "total_count: ${it.totalCount}")
-                        Log.i(TAG, it.items.toString())
-                    }
+                Log.i(TAG, it.toString())
+                toast("로그인 성공!")
 
-                }, {
-
-                })
-
+                // Anko
+                startActivity<SearchActivity>()
 
             }
         }, {
