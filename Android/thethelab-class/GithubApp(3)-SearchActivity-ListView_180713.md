@@ -1,7 +1,7 @@
 # ListView 사용하기
 
-로그인을 성공했다면  
-검색 결과를 list로 보여주는 액티비티로 전환해보자.
+SignInActivity에서 로그인에 성공했다면  
+검색 결과를 list로 보여주는 SearchActivity 액티비티로 전환해보자.
 
 Activity 만드는 방법
 1. res/layout  
@@ -29,6 +29,8 @@ startActivity<SearchActivity>()
 1. List, ArrayList, HashMap 등의 초기화된 데이터 형을 만들어준다.
 2. 초기화된 데이터들은 Adapter를 거치고
 3. ListView의 position에 뿌려준다.
+
+ListView는 ListView 하나로 이루어지는 것이 아니라 리스트뷰에 표시할 항목을 담고 있는 리스트 객체, 리스트 객체의 데이터를 리스트뷰에서 표시할 수 있게 해주는 어댑터, 최종적으로 화면에 리스트를 표시해 주는 리스트뷰(ListView)로 구성됩니다.
 
 
 ------
