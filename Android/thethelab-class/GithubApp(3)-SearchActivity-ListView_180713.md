@@ -1,5 +1,7 @@
 # ListView 사용하기
 
+## 사용준비
+
 SignInActivity에서 로그인에 성공했다면  
 검색 결과를 list로 보여주는 SearchActivity 액티비티로 전환해보자.
 
@@ -25,6 +27,8 @@ startActivity<SearchActivity>()
 ```
 
 ------
+
+## Adapter
 
 데이터를 리스트로 표현하기 위한 구성 요소 3가지
 - ListView
@@ -127,7 +131,6 @@ ViewHolder Pattern : 뷰가 화면에 사라질 때마다 **재사용**하는 �
 -> `getView()` 안에 있는 `convertView`를 사용하자.
 
 **convertView** : 재사용 가능한 view. 만약 null이면 생성해서 사용해야 한다.
-
 
 
 ----
