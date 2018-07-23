@@ -26,11 +26,87 @@ startActivity<SearchActivity>()
 
 ------
 
-1. List, ArrayList, HashMap 등의 초기화된 데이터 형을 만들어준다.
-2. 초기화된 데이터들은 Adapter를 거치고
-3. ListView의 position에 뿌려준다.
+데이터를 리스트로 표현하기 위한 구성 요소 3가지
+- ListView
+- 어댑터
+- 원본 데이터
 
-ListView는 ListView 하나로 이루어지는 것이 아니라 리스트뷰에 표시할 항목을 담고 있는 리스트 객체, 리스트 객체의 데이터를 리스트뷰에서 표시할 수 있게 해주는 어댑터, 최종적으로 화면에 리스트를 표시해 주는 리스트뷰(ListView)로 구성됩니다.
+어댑터는 원본 데이터를 ListView와 연결시켜줌과 동시에, 리스트에 원본 데이터를 어떻게 표시할 지 정의해줍니다.
+
+데이터와 리스트뷰 연결하기
+1. 어댑터 정의
+2. 어댑터 생성
+3. 해당 어댑터를 ListView에 set
+
+```kotlin
+class SearchActivity : AppCompatActivity() {
+
+    ...
+
+    // 1. 어댑터 정의
+    class SearchListAdapter(val context: Context): BaseAdapter(){
+        var items: List<GithubRepo> = emptyList()
+
+        override fun getItem(position: Int): Any {
+        }
+
+        override fun getItemId(position: Int): Long {
+        }
+
+        override fun getCount(): Int {
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        }
+    }
+
+    ...
+
+    lateinit var listAdapter: SearchListAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ...
+
+        // 2. 어댑터 생성
+        listAdapter = SearchListAdapter(this)
+        
+        // 3. 해당 어댑터를 ListView에 set
+        searchListView.adapter = listAdapter
+
+        ...
+    }
+
+}
+
+```
+
+**주의!** 
+
+데이터에 생긴 변화는 어댑터가 자동으로 감지하지 못하므로 어댑터에게 이 사실을 알려야 합니다.   
+
+`notifyDataSetChanged()` 메소드를 호출하게 되면  
+어댑터가 다시 리스트로부터 최신의 데이터를 받아오고,  
+업데이트된 내용이 다시 ListView에 표시될 수 있게 해줍니다.
+
+> `it.items` : `List<GithubRepo>` <- `Adapter` -> `ListView`
+
+```kotlin
+call.enqueue({ response ->
+    if (response.isSuccessful) {
+        response.body()?.let {
+            listAdapter.items = it.items
+            // 데이터 변경 사실 알려줘야 함.
+            listAdapter.notifyDataSetChanged()
+        }
+    } else {
+        ...
+    }
+}, {...}
+)
+```
+
+
+http://androidhuman.tistory.com/entry/11-List-%EC%A7%91%EC%A4%91%EA%B3%B5%EB%9E%B5-1-%EA%B8%B0%EB%B3%B8-%EB%8B%A4%EC%A7%80%EA%B8%B0
 
 
 ------
@@ -54,29 +130,62 @@ ViewHolder Pattern : 뷰가 화면에 사라질 때마다 **재사용**하는 �
 
 
 
+----
+
 ```kotlin
-    class SearchListAdapter(val context: Context): BaseAdapter(){
-        var items: List<GithubRepo> = emptyList()
+class SearchListAdapter(val context: Context): BaseAdapter(){
+    var items: List<GithubRepo> = emptyList()
 
-        override fun getItem(position: Int): Any {
-            return items[position]
-        }
-
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
-
-        override fun getCount(): Int {
-            return items.count()
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            return convertView!!
-        }
-
+    override fun getItem(position: Int): Any {
+        return items[position]
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getCount(): Int {
+        return items.count()
+    }
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val item = items[position]
+        
+        // LayoutInflater: xml로 되어 있는 layout 을 Kotlin의 View로 변환한다.
+
+        return if (convertView == null) {
+            // Item View 생성
+            
+            val view = LayoutInflater.from(context).inflate(R.layout.item_repo, null)
+            view.repoNameText.text = item.fullName
+
+            view
+        } else {
+            // Item View 재사용
+            
+            convertView.repoNameText.text = item.fullName
+
+            convertView
+        }
+    }
+}
 ```
 
+----
+
+
+
+---
+
+1. SearchListAdapter 클래스를 SearchActivity 클래스의 안에 정의했음.  
+Inner Class? Nested Class?
+???
+이유는??
+
+2. `val view = LayoutInflater.from(context).inflate(R.layout.item_repo, null)`
+왜 null 로 ??
+
+----
 
 
 
