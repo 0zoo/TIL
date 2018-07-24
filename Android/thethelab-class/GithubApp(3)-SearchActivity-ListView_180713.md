@@ -176,9 +176,7 @@ class SearchListAdapter(val context: Context): BaseAdapter(){
 
 ----
 
-
-
----
+왜그런지 나중에!
 
 1. SearchListAdapter 클래스를 SearchActivity 클래스의 안에 정의했음.  
 Inner Class? Nested Class?
