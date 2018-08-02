@@ -9,7 +9,12 @@ data class Auth(
         val tokenType: String) {
 }
 
-data class GithubRepo(@field:SerializedName("full_name") val fullName: String)
+data class GithubRepo(@field:SerializedName("full_name") val fullName: String, val owner: GithubOwner)
 
 data class RepoSearchResponse(@field:SerializedName("total_count") val totalCount: Int,
                               val items: List<GithubRepo>)
+data class GithubOwner(val login: String,
+                       @field:SerializedName("avatar_url") val avatarUrl: String)
+
+
+// [ imguru/kotlin-app : loginName : avatarURL ]

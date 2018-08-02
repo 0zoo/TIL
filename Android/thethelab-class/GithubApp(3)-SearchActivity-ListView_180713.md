@@ -27,6 +27,52 @@ startActivity<SearchActivity>()
 ```
 
 ------
+### 리스트뷰의 구조
+![리스트뷰의 구조](https://user-images.githubusercontent.com/38287485/43572651-ffcfe7c0-967a-11e8-8e68-8c02fb8ca43e.png)
+
+
+### ViewHolder Pattern
+
+convertView는 재활용 되는 View이기때문에 아이템을 표시 할때마다 findViewById()를 호출해서 View를 얻어 올 필요는 없다.  
+매번 findViewById()를 호출한다는 것은 매우 값비싼 작업.
+
+convertView의 tag에 모든View의 정보를 객체로 가지고 있있다가 최초에 한 번 저장해두고 재활용시 불러와서 사용하는 구조를 만들면 된다.
+
+
+```java
+public View getView(int position, View convertView, ViewGroup parent) {
+
+  ViewHolder holder;
+
+  if (convertView == null) {
+    convertView = mInflater.inflate(R.layout.list_item, null);
+    holder = new ViewHolder();
+    holder.text = (TextView) convertView.findViewById(R.id.text);
+    convertView.setTag(holder);
+  } else {
+    holder = convertView.getTag();
+  }
+
+  holder.text.setText("position " + position);
+    return convertView;
+  }
+
+  private static class ViewHolder {
+    public TextView text;
+  }
+
+}
+```
+ViewHolder Class는 아이템 View가 달라질때 마다 새롭게 생성해야 한다. 즉 Adapter마다 각각의 ViewHolder를 가지고 있어야 한다. 아이템 View가 바뀌게 되면 ViewHolder도 같이 수정되어야 하기때문에 유지/보수 면에서는 좋은 구조는 아니다.  
+좀 더 유연하게 하기 위해서는 ViewHolder를 정적이아닌 **동적**으로 변경이 가능한 구조로 하꿔야 한다.
+
+
+
+
+참고:
+http://www.kmshack.kr/2014/08/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-ui%EC%B5%9C%EC%A0%81%ED%99%94-%EB%A6%AC%EC%8A%A4%ED%8A%B8%EB%B7%B0-%EC%84%B1%EB%8A%A5%EC%B5%9C%EC%A0%81%ED%99%94/
+
+----
 
 ## Adapter
 
@@ -120,17 +166,20 @@ ListView의 문제점
 * Item Layout의 형태를 변경할 수 없다.
 * 타입 안정성이 없다.
 
-## ViewHolder Pattern
+
+----
+
 
 스크롤되어 화면에서 사라진 view를 메모리에 남겨두고 매번 새로 생성한다면 메모리에 상당한 부담이 된다.
 
 데이터의 개수만큼 view를 생성하는 것이 아니라, 화면에 보이는 만큼만 view를 갖고 있자.  
 
-ViewHolder Pattern : 뷰가 화면에 사라질 때마다 **재사용**하는 패턴.
+뷰가 화면에 사라질 때마다 **재사용**
 
--> `getView()` 안에 있는 `convertView`를 사용하자.
+ViewHolder Pattern :  
 
-**convertView** : 재사용 가능한 view. 만약 null이면 생성해서 사용해야 한다.
+뷰들을 화면에 홀더에 꼽아놓듯이 보관하는.
+각각의 객체의 내용을 변경하기 위해 `findViewById`를 호출하는데 비용이 많이 들어 효율적으로 사용하기 위해 쓰는 패턴.
 
 
 ----
@@ -165,7 +214,8 @@ class SearchListAdapter(val context: Context): BaseAdapter(){
             view
         } else {
             // Item View 재사용
-            
+            // inflate 할 필요 없이 내용만 바꾸면 됨.
+
             convertView.repoNameText.text = item.fullName
 
             convertView
@@ -176,17 +226,7 @@ class SearchListAdapter(val context: Context): BaseAdapter(){
 
 ----
 
-왜그런지 나중에!
 
-1. SearchListAdapter 클래스를 SearchActivity 클래스의 안에 정의했음.  
-Inner Class? Nested Class?
-???
-이유는??
-
-2. `val view = LayoutInflater.from(context).inflate(R.layout.item_repo, null)`
-왜 null 로 ??
-
-----
 
 
 
