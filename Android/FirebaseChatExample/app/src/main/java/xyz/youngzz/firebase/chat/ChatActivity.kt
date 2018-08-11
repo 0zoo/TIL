@@ -106,6 +106,8 @@ class ChatActivity : AppCompatActivity() {
         adapter.items = model.chatItems
         model.onChangedChatItems = {
             adapter.items = it
+            recyclerView.layoutManager.scrollToPosition(it.size - 1)
+
         }
 
         sendButton.setOnClickListener {
@@ -118,7 +120,6 @@ class ChatActivity : AppCompatActivity() {
                 if(body.isNotBlank()){
                     model.postChat(ChatItem(name?:"Unnamed",body.toString()))
                     editText.text.clear()
-                    //recyclerView.layoutManager.scrollToPosition(0)
                 }
             }
         }
