@@ -87,6 +87,9 @@ inline fun<reified E: Activity> Context.startActivity() {
     val intent = Intent(this, E::class.java)
     startActivity(intent)
 }
+
+inline fun <reified T: Activity> Context.startActivity(vararg params: Pair<String, Any?>) =
+        AnkoInternals.internalStartActivity(this, T::class.java, params)
 */
 
 

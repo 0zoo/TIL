@@ -117,7 +117,7 @@ class ChatActivity : AppCompatActivity() {
             adapter.items = it
             // recyclerView.scrollToPosition(recyclerView.adapter.itemCount - 1)
             if (it.isNotEmpty())
-                //recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount - 1)
+            //recyclerView.smoothScrollToPosition(recyclerView.adapter.itemCount - 1)
                 recyclerView.betterSmoothScrollToPosition(recyclerView.adapter.itemCount - 1)
         }
 
@@ -192,7 +192,4 @@ fun RecyclerView.betterSmoothScrollToPosition(targetItem: Int) {
 
 @GlideModule
 class ChatAppGlideModule : AppGlideModule()
-
-
-
 

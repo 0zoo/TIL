@@ -67,6 +67,7 @@ class ChatModel {
 
         val uploadTask = uploadRef.putBytes(data)
         with(uploadTask) {
+
             addOnFailureListener {
                 onFailure?.invoke(it)
             }
@@ -85,7 +86,7 @@ class ChatModel {
     // Url을 요청하는 것도 비동기적으로 처리해야 한다.
 
     // firebase_chat_18_08_11_16_26_30.jpeg
-    private fun generateImageName(): String {
+    fun generateImageName(): String {
         // val now = LocalDateTime.now() - API 26, Java 8
         val now = LocalDateTime.now()
         val formatter = DateTimeFormat.forPattern("yy_MM_dd_HH_mm_ss")

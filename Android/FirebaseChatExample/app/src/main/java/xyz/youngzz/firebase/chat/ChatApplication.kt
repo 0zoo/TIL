@@ -9,7 +9,6 @@ import net.danlew.android.joda.JodaTimeAndroid
         => ChatApplication 생성
     3. Application을 상속받아서 만들었다면,
         반드시 manifest에 등록해야 한다.
-
  */
 
 class ChatApplication : Application(){
