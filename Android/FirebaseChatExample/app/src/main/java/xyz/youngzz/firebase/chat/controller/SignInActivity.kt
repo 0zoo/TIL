@@ -7,6 +7,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.startActivity
 import xyz.youngzz.firebase.chat.R
 
@@ -34,6 +35,13 @@ class SignInActivity : AppCompatActivity() {
                 AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
+        val signInProviders = listOf(
+                AuthUI.IdpConfig.EmailBuilder()
+                        .setAllowNewAccounts(true)
+                        .setRequireName(true)
+                        .build()
+        )
+
         googleSignInButton.setOnClickListener {
             // 2. 로그인 액티비티 수행
             startActivityForResult(AuthUI.getInstance()
@@ -51,13 +59,14 @@ class SignInActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == RESULT_OK) {
+                val progressDialog = indeterminateProgressDialog ( "setting up your account" )
                 val user = FirebaseAuth.getInstance().currentUser
 
                 user?.let {
-                    // Log.i("SignInActivity", user.uid)
-                    // Anko commons
                     startActivity<ChatActivity>()
                 }
+
+                progressDialog.dismiss()
             } else {
                 Log.e("SignInActivity", "Sign in Failed")
             }

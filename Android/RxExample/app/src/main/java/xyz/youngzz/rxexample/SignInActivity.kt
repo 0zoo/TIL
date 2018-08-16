@@ -1,10 +1,7 @@
 package xyz.youngzz.rxexample
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.activity_sign_in.*
+import android.support.v7.app.AppCompatActivity
 
 
 class SignInModel{
@@ -22,6 +19,16 @@ class SignInViewModel{
         model.login(email, password )
     }
 }
+
+// Android Project
+//  app
+//    src
+//      main/java/   - 제품 코드
+
+//      test         - Model(안드로이드 의존성이 없는 모듈을 검증하기 위한 코드)
+//      androidTest  - View/Activity(안드로이드에 의존성이 있는 모듈을 검증하기 위한 코드)
+
+
 
 class SignInActivity : AppCompatActivity() {
 
