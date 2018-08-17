@@ -38,8 +38,6 @@ filter, map, forEach ...
 
 ------
 
-
-
 # Reactive Programming
 
 > 반응형 프로그래밍은 데이터의 흐름과 변화에 대한 전달을 기반으로 하는 프로그래밍 패러다임이다.
@@ -56,53 +54,59 @@ filter, map, forEach ...
 - Observable : 아이템을 발행 
 - Subscriber : 아이템을 소비 
 
-Observable은 0..N 개의 Item을 발행하며 `onNext(item)`,  
-최종적으로 `onCompleted()` 또는 `onError()`를 전파하여 흐름이 종료되었음을 알린다.
+Observable은
+1. `onNext` - 새로운 데이터를 전달한다.
+2. `onCompleted` - 스트림의 종료.
+3. `onError` - 에러 신호를 전달한다
 
 Observable을 더 이상 구독하고 있을 필요가 없다면, `unsubscribe`나 `dispose`를 해주어야 한다.  
 - unsubscribe : 구독을 중지
 - dispose : 아예 더 이상 구독을 하지 않도록 처분하는 것 
 
-
-
 옵저버 패턴과 비슷하지만,  
 Observable은 보통 누군가 명시적으로 아이템을 구독(subscribe)하기 전까지는 아이템을 발행하지 않는 차이점이 있다.
 
-### 1. Observable 생성하기
-```java
-Observable.create(
-    subscriber -> {
-        subscriber.onNext("Hello");
-        subscriber.onNext("Hi");
-        subscriber.onCompleted();
-    }
-)
+### 요소
 
-// Observable.from(Arrays.asList("Hello", "Hi"));
-// 단, Observable.just() 나 Observable.from()을 사용하려면
-// 발행되는 Item 들이 observable 생성시점에 이미 정해져있어야 한다. 
-```
+1. `Observable`  
+: 이벤트를 만들어내는 주제로, 이벤트 스트림을 통해 만든 이벤트를 내보냅니다. 한개부터 여러개의 이벤트를 만들 수 있으며, 만들지 않는 경우도 있습니다.
+
+2. `Observer`  
+: Observable 에서 만들어진 이벤트가 반응(React)하며, 이벤트를 받았을 때 수행할 작업을 정의합니다.  
+    * Observer가 Observable를 **구독(subscribe)** 한다고 합니다.  
+    `myObservable.subscribe(myObserver)`
+
+3. `Operator`  
+: 연산자는 이벤트 스트림을 통해 전달되는 이벤트를 변환합니다.  
+이벤트가 가지고 있는 값을 다른 형태로 변환하는 것도 가능하고, -> map, flatMap  
+특정 조건을 만족하는 이벤트 스트림을 흘려보내거나, 개수를 변경하는 작업등을 수행할 수 있습니다. -> filter, first, last
+
+4. `Scheduler`  
+: 해당 작업을 수행할 스레드를 지정합니다.  
+UI - main thread  
+IO / Worker / New Thread  
+observerOn 메소드를 사용해서 지정하며, 이 메소드를 호출한 직후에 오는 연산자나 옵저버에서 수행되는 작업의 스레드가 변경됩니다.
+
+5. `Disposable`  
+: Observer가 Observable을 구독할 때 생성되는 객체로서, Observable에서 만드는 이벤트 스트림과 이에 필요한 리소스를 관리합니다.  
+Observable로 부터 이벤트를 받지 않기 위해서는 이 객체를 통해 구독해지가 가능합니다.  
+`CompositeDisposable`을 사용하면 여러개의 Disposable 객체를 하나의 객체에서 관리할 수 있습니다.
 
 
 ----
 
-### Data Binding
 
+- 데이터 주입 : `subscribeOn`  
+데이터를 주입하는 시점에 대한 쓰레드 선언이며 모든 stream 내에서 최종적으로 선언한 쓰레드가 할당됩니다.
+- 데이터 처리 : `observeOn`  
+쓰레드를 선언한 다음부터 새로운 쓰레드가 선언되기 전까지 데이터 처리에 동작할 쓰레드를 할당합니다.
 
-데이터 바인딩 모델? 
+-----
+### 코틀린으로 바인딩하기
 
-Rx 를 사용하면
-
-데이터를 바인딩해준다. 일관성을 가짐
-
-
-view 안에 있는 textView가 있고,
-
-model이 있을 경우에
-
-데이터 바인딩 뷰와 모델이 일관성을 가지도록 ...
-
-
+```
+implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1'
+```
 
 -----
 

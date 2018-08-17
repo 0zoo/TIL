@@ -2,21 +2,23 @@ package xyz.youngzz.rxexample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import com.jakewharton.rxbinding2.widget.textChanges
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.activity_sign_in.*
 
 
-class SignInModel{
-    fun login(email: String, password : String){
-        //
-    }
-}
+data class SignInModel(val email : String, val password : String)
 
 class SignInViewModel{
     var email = ""
     var password = ""
-    val model = SignInModel()
+    val model = SignInModel("","")
 
     fun login(){
-        model.login(email, password )
+        //model.login(email, password )
     }
 }
 
@@ -32,14 +34,20 @@ class SignInViewModel{
 
 class SignInActivity : AppCompatActivity() {
 
-    val viewModel = SignInModel()
+    val viewModel = SignInModel("","")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
-        //val emailObservable: BehaviorSubject<String> = BehaviorSubject.create()
+        PublishSubject.create<SignInModel>()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
 
+        emailEditText.textChanges().subscribe{
+            Log.i("SignInActivity",it.toString())
+        }
 
     }
 }
