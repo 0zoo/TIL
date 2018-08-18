@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Oauth Example</string>
+
+    <string name="kakao_app_key">bcc9db9df89e5a04b5ec809be25d7325</string>
+</resources>
