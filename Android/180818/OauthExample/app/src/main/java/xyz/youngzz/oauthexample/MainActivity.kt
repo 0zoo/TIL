@@ -1,83 +1,59 @@
 package xyz.youngzz.oauthexample
 
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Base64
 import android.util.Log
-import com.bumptech.glide.annotation.GlideModule
-import com.bumptech.glide.module.AppGlideModule
-import com.kakao.auth.ISessionCallback
-import com.kakao.auth.Session
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
+import com.kakao.usermgmt.callback.LogoutResponseCallback
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
-import com.kakao.util.exception.KakaoException
 import kotlinx.android.synthetic.main.activity_main.*
-import java.security.MessageDigest
+import org.jetbrains.anko.startActivity
+import xyz.youngzz.oauthexample.module.GlideApp
 
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        const val NAVER_CLIENT_ID = "9jTdD5GFabcAkROVA29k"
-        const val NAVER_CLIENT_SECRET = "lvzxtIgaR6"
-    }
-
-
-    inner class SessionCallback : ISessionCallback {
-        override fun onSessionOpenFailed(exception: KakaoException?) {
-            exception?.let {
-                it.printStackTrace()
-            }
-        }
-
-        override fun onSessionOpened() {
-            Log.i("OAuth_app", "onSessionOpened")
-            requestMe()
-        }
-
-    }
-
-    lateinit var callback: SessionCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        try {
-            val info = packageManager.getPackageInfo(
-                    packageName, PackageManager.GET_SIGNATURES);
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.e("MY KEY HASH:",
-                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (e : PackageManager.NameNotFoundException) {
+        val type = intent.extras.getString("LOGIN")
 
-        } catch (e: NoSuchFieldException) {
+        when(type){
+            "KAKAO"-> requestMe()
+
+        }
+
+        logoutButton.setOnClickListener{
+            onClickLogout(type)
         }
 
 
-        callback = SessionCallback()
-        Session.getCurrentSession().addCallback(callback)
-        Session.getCurrentSession().checkAndImplicitOpen()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data))
-            return
+    private fun onClickLogout(type : String) {
+        when(type){
+            "KAKAO"-> {
+                UserManagement.getInstance().requestLogout(object : LogoutResponseCallback() {
+                    override fun onCompleteLogout() {
+                        //redirectLoginActivity()
+                        startActivity<SignInActivity>()
+                    }
+                })
+            }
 
-        super.onActivityResult(requestCode, resultCode, data)
+        }
+
+
     }
 
     private fun requestMe() {
         val keys = listOf(
                 "properties.nickname",
-                "properties.profile_image"
+                "properties.profile_image",
+                "kakao_account.email"
         )
 
         UserManagement.getInstance().me(keys, object : MeV2ResponseCallback() {
@@ -86,9 +62,15 @@ class MainActivity : AppCompatActivity() {
                     Log.i("OAuth_app", "ID: ${it.id}")
                     Log.i("OAuth_app", "Nickname: ${it.nickname}")
                     Log.i("OAuth_app", "Profile Image: ${it.profileImagePath}")
+                    Log.i("OAuth_app", "Email: ${it.kakaoAccount.email}")
+
+
                     GlideApp.with(this@MainActivity)
                             .load(it.profileImagePath)
                             .into(profileImageView)
+
+                    nameTextView.text = it.nickname
+
                 }
             }
 
@@ -99,8 +81,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+
+
+
 }
 
-
-@GlideModule
-class ChatAppGlideModule : AppGlideModule()
