@@ -8,9 +8,12 @@ import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.LogoutResponseCallback
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
+import com.nhn.android.naverlogin.OAuthLogin
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.startActivity
+import xyz.youngzz.oauthexample.api.provideNaverApi
 import xyz.youngzz.oauthexample.module.GlideApp
+import xyz.youngzz.oauthexample.util.enqueue
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,27 +24,58 @@ class MainActivity : AppCompatActivity() {
 
         val type = intent.extras.getString("LOGIN")
 
-        when(type){
-            "KAKAO"-> requestMe()
+        action(type)
 
-        }
-
-        logoutButton.setOnClickListener{
+        logoutButton.setOnClickListener {
             onClickLogout(type)
         }
 
+    }
+
+    private fun action(type: String){
+
+        when (type) {
+            "KAKAO" -> requestMe()
+            "NAVER" -> {
+
+                Log.i("TOKEN", intent.extras.getString("ACCESS_TOKEN"))
+                val accessToken = intent.extras.getString("ACCESS_TOKEN")
+                val naverApiCall = provideNaverApi(this@MainActivity, accessToken).getUserInfo()
+
+                naverApiCall.enqueue({
+                    it.body()?.let {response ->
+                        Log.i("MainActivity",response.toString())
+                        val user = response.response
+                        GlideApp.with(this)
+                                .load(user.profileImage)
+                                .into(profileImageView)
+
+                        nameTextView.text = user.name
+
+                    }
+                }, {
+
+                })
+
+
+            }
+        }
 
     }
 
-    private fun onClickLogout(type : String) {
-        when(type){
-            "KAKAO"-> {
+    private fun onClickLogout(type: String) {
+        when (type) {
+            "KAKAO" -> {
                 UserManagement.getInstance().requestLogout(object : LogoutResponseCallback() {
                     override fun onCompleteLogout() {
-                        //redirectLoginActivity()
                         startActivity<SignInActivity>()
                     }
                 })
+            }
+
+            "NAVER" -> {
+                OAuthLogin.getInstance().logout(this)
+                startActivity<SignInActivity>()
             }
 
         }
@@ -80,8 +114,6 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
-
-
 
 
 }

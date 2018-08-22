@@ -35,19 +35,16 @@ class SignInActivity : AppCompatActivity() {
 
     }
 
-    lateinit var callback: SessionCallback
-    lateinit var mOAuthLoginModule: OAuthLogin
+    private lateinit var callback: SessionCallback
+    private lateinit var mOAuthLoginModule: OAuthLogin
 
     private val mOAuthLoginHandler = @SuppressLint("HandlerLeak")
     object : OAuthLoginHandler(){
         override fun run(success: Boolean) {
             if (success) {
                 val accessToken = mOAuthLoginModule.getAccessToken(baseContext)
-                val refreshToken = mOAuthLoginModule.getRefreshToken(baseContext)
-                val expiresAt = mOAuthLoginModule.getExpiresAt(baseContext)
-                val tokenType = mOAuthLoginModule.getTokenType(baseContext)
 
-                Log.i("NAVER",accessToken)
+                startActivity<MainActivity>("LOGIN" to "NAVER", "ACCESS_TOKEN" to accessToken)
             }
 
         }
@@ -65,14 +62,12 @@ class SignInActivity : AppCompatActivity() {
         Session.getCurrentSession().checkAndImplicitOpen()
 
 
-
         //naver
         mOAuthLoginModule = OAuthLogin.getInstance()
         mOAuthLoginModule.init(this, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET,"TEST")
 
         naverButton.setOAuthLoginHandler(mOAuthLoginHandler)
 
-        //mOAuthLoginModule.startOauthLoginActivity(this, mOAuthLoginHandler)
 
 
     }
