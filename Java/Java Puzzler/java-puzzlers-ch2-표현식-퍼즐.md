@@ -2,120 +2,90 @@
 
 ## 1. 홀수 확인
 ### Question
-```java
-public boolean isOdd (int i){
-//홀수인지 확인하는 메소드
-    return i%2 == 1;
-}
+
+```kotlin
+fun isOdd(i : Int): Boolean = i%2 == 1
 ```
 
-매개변수 i에 음수값이 들어 온다면 항상 false를 반환한다.
+매개변수 i에 **음수값**이 들어 온다면 **항상 false**를 반환한다.
 
 > **나머지 연산의 반환 값의 부호** == **왼쪽 피연산자의 부호**
+>> 3 % 2 => 1    
+>> 3 % -2 => 1  
+>> -3 % 2 => -1    
+>> -3 % -2 => -1  
+
 
 ### Solution
-```java
-public boolean isOdd (int i){
-    return i % 2 != 0;
-}
-```
 
-```java
-//비트연산자가 속도 측면에서 훨씬 좋다.
-public boolean isOdd (int i){
-    return (i & 1) != 0;
-}
+```kotlin
+fun isOdd(i : Int): Boolean = i%2 != 0
 ```
+- 비트 AND 연산자(&)가 속도 측면에서 훨씬 좋다.
 
+```kotlin
+fun isOdd(i : Int): Boolean = (i and 2) != 0
+```
 
 ## 2. 변화를 위한 시간
 ### Question
-```java
-public class Change{
-    public static void main(String args[]){    
-        System.out.println(2.00-1.10);
-    }
-}
+
+```kotlin
+println(2.00 - 1.10) // 0.8999999999999999
 ```
 
-0.9가 출력되기를 원하지만,  
-실제 실행 결과는 0.8999999999999999가 나온다.
+자바는 __이진 부동소수점__ 연산을 사용하기 때문에, 정확한 1.1을 표현할 수 없다.
 
-자바는 정확한 1.1을 표현할 수 없다.
-자바는 __이진 부동소수점__ 연산을 사용한다.
+- 정확한 결과값이 필요하다면 float, double 자료형 사용하지 말 것.
 
 ### Solution
 __BigDecimal(String)__ 을 사용하자.  
 (단, BigDecimal(double) 절대 사용 x)
 
-```java
-public class Change{
-    public static void main(String args[]){    
-        System.out.println( new BigDecimal("2.00")
-        .substract(new BigDecimal("1.10")) );
-    }
-}
+```kotlin
+println(BigDecimal("2.00").subtract(BigDecimal("1.10"))) // 0.90
 ```
 
 ## 3. Long 자료형 나눗셈
 ### Question
 
-```java
-public class LongDivision{
-    public static void main(String args[]){
-		final long MICROS = 24*60*60*1000*1000;
-		final long MILLIS = 24*60*60*1000;    
-        System.out.println( MICROS / MILLIS );
-    }
-}
-```
+```kotlin
+val micros :Long = 24*60*60*1000*1000
+// warning 발생. 오버플로우
 
-1000이 출력되는 것을 기대하지만, MICROS에서 **오버플로우**가 발생한다.
+val millis : Long = 24*60*60*1000
+println(micros/millis) // 5
+```
 
 __자바는 타깃 타이핑을 지원하지 않는다.__
 
-- 타깃 타이핑 (Target Typing):
+- **타깃 타이핑 (Target Typing)**:  
 	long = int * int 의 연산을 실행한다면  
     결과값의 자료형에 맞춰서 int형을 long 타입으로 변환하여 연산해주는 것.
 
 ### Solution
 
-```java
-public class LongDivision{
-    public static void main(String args[]){
-		final long MICROS = 24L*60*60*1000*1000;
-		final long MILLIS = 24L*60*60*1000;    
-        System.out.println( MICROS / MILLIS );
-    }
-}
+```kotlin
+val micros : Long = 24L*60*60*1000*1000
 ```
 
+- **큰 숫자를 다룰 경우**에는 항상 **오버플로우를 주의**하고, **내부에서 사용하는 변수의 자료형을 확인**하자.
 
-**큰 숫자를 다룰 경우**에는 항상 **오버플로우를 주의**하고, **내부에서 사용하는 변수의 자료형을 확인**하자.
-
+- 파이썬과 루비는 타깃 타이핑을 지원해줌.
 
 ## 4. 초등학교 수준의 문제
+
 ### Question
 ```java
-public class Elementary{
-    public static void main(String args[]){  
-        System.out.println( 12345 + 5432l);
-    }
-}
+System.out.println( 12345 + 5432l);
 ```
 
-long형을 쓸 때에는 대문자 L을 사용하자. 
-l 과 1은 구분이 힘들 수 있다.
+- long형을 쓸 때에는 대문자 L을 사용하자. 
 
 ### Solution
 ```java
-public class Elementary{
-    public static void main(String args[]){  
-        System.out.println( 12345 + 5432L);
-    }
-}
+System.out.println( 12345 + 5432L);
 ```
-
 
 ## 5. 16진수의 즐거움
 
@@ -170,7 +140,6 @@ public class JoyOfHex{
     }
 }
 ```
-
 
 ## 6. 다중 자료형 변환
 
@@ -275,23 +244,125 @@ public class CleverSwap{
         x ^= y ^= x ^= y;
         System.out.println(x);
         System.out.println(y);
+        // x = 0
+        // y = 1984
     }
 }
 ```
 
+```
+// 추가적인 변수 없이 두 변수를 교환하는 방법
+// 절대 사용하지 말 것!
+x = x ^ y;
+y = y ^ x;
+x = x ^ y;
+```
+
 ### Solution
 
+- 하나의 표현식에 동일한 변수를 여러 번 할당하지 말자.
+
+```java
+int tmp = x;
+x = y;
+y = tmp;
+```
 
 ## 8. Dos Equis
 ### Question
+```java
+char x = 'X';
+int i = 0;
+
+System.out.print(true ? x:0);
+System.out.print(false ? i:x);
+
+// X88
+```
+
+여러 자료형을 혼합해서 계산하면 매우 복잡하다.
+
+마지막에 88로 출력된 이유? int 자료형 타입으로 출력되었기 때문.
+
+- 조건연산자의 최종 자료형을 결정하는 규칙
+    1. byte, short, char 자료형을 T자료형이라고 하면,  
+    피연산자 중 하나가 T 자료형이고 다른 하나가 T 자료형으로 변환 가능한 int 상수라면 T 자료형으로 결과를 낸다.
+
+    2. 만약 이것이 아니라면 `이항 숫자 확산(binary numeric promotion)`을 적용하고, 더 큰 자료형으로 결과를 도출함.
+
+`true ? x:0`의 경우는 **1번 조건**에 해당하여, 결과값이 char 타입으로 결정되었고,  
+`false ? i:x`는 i가 변수이기 때문에 **2번 조건**에 해당하여, 결과값이 int 타입으로 결정된 것이다.
+
+
 ### Solution
 
+```java
+final int i = 0;
+```
+i를 final로 선언하여 상수로 만들어 준다.
+
+- 조건 연산자를 사용할 때는,  
+두번째와 세번째 피연산자의 자료형을 일치시키고 사용할 것! 
 
 ## 9. 같은 것 같으면서도 다른 것 (1)
+
 ### Question
+
+`x += i` 는 정상 컴파일,  
+`x = x + i`는 컴파일 에러가 발생하도록  
+변수 x와 i의 선언문 작성해보자.
+
 ### Solution
 
+> `x += i`와 `x = x + i`는 모두 할당 표현식.
+>> `x = x + i`는 단순 할당 연산자(=)를 사용하지만,  
+>> `x += i`는 복합 할당 연산자(+=)를 사용하는 차이점.
+
+- 복합 할당 연산자는 연산 결과를 왼쪽 변수의 자료형으로 자동 변환한다.  
+    - `T`가 `E1`의 자료형일 때,
+    - `E1 = (T)( E1 op E2 )`
+
+연산 결과가  왼쪽 자료형보다 커지면 기본 자료형 축소가 일어나지만,  
+단순 할당의 경우에는, 컴파일 에러가 발생함.
+
+```java
+short x = 0;
+int i = 123456;
+
+x += i; // 자동 자료형 변환 발생
+// 결과값 : -7616
+// int 자료형이 더 크기 때문에 over flow가 발생함.
+
+x = x + i; // 컴파일 에러 발생
+```
+
+- byte, short, char 자료형의 변수에 복합 할당 연산자 사용하지 말 것!
+
+> 복합 할당 연산자는 **자동 자료형 변환**이 일어난다.
 
 ## 10. 같은 것 같으면서도 다른 것 (2)
 ### Question
+
+`x = x + i` 는 정상 컴파일,  
+`x += i`는 컴파일 에러가 발생하도록  
+변수 x와 i의 선언문 작성해보자.
+
 ### Solution
+
+딱 한가지 방법에서는 단순 할당 연산자가 더 유연하다.
+
++= 연산자의 왼쪽이 String 타입이라면 오른쪽에 모든 자료형이 올 수 있다.  
+
+```java
+Object x = "Buy";
+
+String i = " banana";
+
+x = x + i;
+
+x += i;
+```
+
+
+?? intellij 로 해봤는데 둘 다 컴파일 됨!
+
