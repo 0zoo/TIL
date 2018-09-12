@@ -1,4 +1,4 @@
-# Chapter.2 안드로이드와 모델-뷰-컨트롤러
+# Chapter2. 안드로이드와 모델-뷰-컨트롤러
 
 ## 새로운 클래스 만들기
 
@@ -133,11 +133,6 @@ class QuizActivity : AppCompatActivity() {
     - hdpi : 고밀도 화면 (~240dpi)
     - xhdpi : 초고밀도 화면 (~320dpi)
     - xxhdpi : 극초고밀도 화면 (~480dpi)
-
-
-- drawable
-- drawable-v24
-??
 
 
 ### 프로젝트에 리소스 추가하기
