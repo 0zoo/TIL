@@ -2,10 +2,16 @@ package xyz.e0zoo.geoquiz
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_quiz.*
 
 class QuizActivity : AppCompatActivity() {
+    companion object {
+        private val TAG = QuizActivity::class.java.simpleName
+        private const val KEY_INDEX = "index"
+
+    }
 
     private val mQuestionBank = listOf(
             Question(R.string.question_oceans, true),
@@ -18,6 +24,13 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d(TAG,"OnCreate() called")
+
+        savedInstanceState?.let {
+            mCurrentIndex = it.getInt(KEY_INDEX,0)
+        }
+
         setContentView(R.layout.activity_quiz)
 
         trueButton.setOnClickListener {
@@ -58,4 +71,40 @@ class QuizActivity : AppCompatActivity() {
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
 
     }
+
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"onStart() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"onPause() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG,"onResume() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG,"onStop() called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG,"onDestroy() called")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        Log.i(TAG, "onSaveInstanceState")
+        outState?.let {
+            it.putInt(KEY_INDEX,mCurrentIndex)
+        }
+    }
+
 }
