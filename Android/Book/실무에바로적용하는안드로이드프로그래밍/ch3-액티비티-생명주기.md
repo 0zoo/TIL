@@ -2,8 +2,6 @@
 
 ![Activity Lifecycle diagram](https://developer.android.com/guide/components/images/activity_lifecycle.png)
 
-![Activity Lifecycle diagram](https://user-images.githubusercontent.com/38287485/45405558-557acf80-b69e-11e8-9610-50da04523309.jpg)
-
 - 액티비티의 3가지 상태
     1. 실행(Running) - 화면에 보이며 foreground에 있음.
     2. 일시 중지(Paused) - 화면에 보임.
@@ -237,14 +235,48 @@ onCreate()에서 `super.onCreate(savedInstanceState)`를 통해 번들 객체를
 기본형 데이터 타입이거나 Serializable 또는 Parcelable 인터페이스를  
 구현하는 객체임을 유의하자.
 
-- onSaveInstanceState()를 오버라이드했을 떄는 테스트를 해보는 것이 좋다.  
-장치의 메모리 부족한 경우에는 메모리를 회수하기 위해   
-안드로이드가 우리 액티비티를 소멸시키도록 하는 방법은   
-이 책의 끝에 나오므로 참고하기.
-
 ## 액티비티 생명주기 다시 알아보기
+
+사용자가 일정 시간 동안 장치를 사용하지 않거나 안드로이드가 메모리를 회수해야 한다면 액티비티가 소멸될 수 있다.  
+
+메모리 회수가 필요하더라도 실행 중인 액티비티를 소멸시키지 않고, 일시 중지(paused)나 중단(stopped) 상태에 있는 액티비티만 소멸시킨다.
+
+1. 액티비티가 paused나 stopped 상태가 됨. 
+2. `onSaveInstanceState(...)`가 호출.
+3. 데이터가 `Bundle`객체에 저장.
+4. 안드로이드 운영체제에 의해 그 `Bundle`객체는 액티비티의 **액티비티 레코드**로 수록됨.
+
+![완전한 액티비티 생명주기](https://user-images.githubusercontent.com/38287485/45405558-557acf80-b69e-11e8-9610-50da04523309.jpg)
+
+액티비티가 **보존(Stashed)** 상태일 때는 액티비티 객체가 존재하지 않지만 액티비티 레코드는 안드로이드 운영체제에 살아있어 되살리는 것이 가능하다.
+
+액티비티가 보존 상태일 때는 `onDestroy()`가 호출되지 않을 수 있다는 것에 유의하자.
+
+-> 항상 `onPause()` 와 `onSaveInstanceState()`가 호출되는 것을 활용하자.
+
+
+- 액티비티 레코드의 소멸 시점??  
+    - back 버튼을 눌러 액티비티가 완전히 소멸되었을 때
+    - 장치가 다시 부팅될 때
+    - 오랫동아 사용하지 않았을 때
+
 
 ## onSaveInstanceState(Bundle) 테스트하기
 
+에뮬레이터의  
+설정 -> 개발자 옵션 -> "액티비티 유지 안함" 
+
+home 버튼을 눌렀을 때 back 버튼을 누른 것 처럼 액티비티를 소멸시킨다.
+
+단, 시스템 성능이 저하될 수 있어 테스트를 끝내고 다시 옵션을 꺼두자. 
+
 ## 로깅 레벨과 관련 메서드들
+
+- ERROR ; `Log.e()` ; 에러
+
+- WARNING ; `Log.e()` ; 경고
+- INFO ; `Log.e()` ; 정보성 메세지
+- DEBUG ; `Log.e()` ; 디버깅 출력. 필터링 o
+- VERBOSE ; `Log.e()` ; 개발 전용
+
 
