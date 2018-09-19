@@ -26,7 +26,14 @@ Log.d(TAG, "...", new Exception());
 디버거가 중단점을 처리하게 하려면 앱을 실행하는 대신 디버깅하도록 `Debug app` 버튼을 클릭하자.   
 > Run -> Debug 'app'
 
-// 실제 중단점 예제 해보고 디버깅 도구 창 캡쳐해서 이미지 첨부하기
+![](https://user-images.githubusercontent.com/38287485/45753698-994c7680-bc54-11e8-883f-a8486bd39e7f.png)
+
+왼쪽의 초록색 resume program 버튼을 누르면 중단점 다음의 코드 계속 실행.
+
+Variables의 this(QuizActivity)를 보면 슈퍼 클래스를 포함한 모든 변수들을 볼 수 있다.
+
+
+
 
 이부분 덜했음.
 

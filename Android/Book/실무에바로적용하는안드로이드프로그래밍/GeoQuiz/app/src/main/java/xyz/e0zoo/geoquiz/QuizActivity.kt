@@ -54,7 +54,7 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
+        //mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
         val question: Int = mQuestionBank[mCurrentIndex].textResId
         questionTextView.setText(question)
     }
