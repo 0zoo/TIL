@@ -32,16 +32,18 @@ Log.d(TAG, "...", new Exception());
 
 Variables의 this(QuizActivity)를 보면 슈퍼 클래스를 포함한 모든 변수들을 볼 수 있다.
 
-
-
-
-이부분 덜했음.
+오른쪽 위로 향하는 모양의 step out 버튼을 클릭하면 호출한 코드로 되돌아간다.
 
 
 ### 예외 중단점 사용하기
 
+원하는 예외가 발생할 때 중단되도록 설정하기.
 
+메뉴의  
+> Run > break points
 
+에 들어가서 Java Exception Breakpoints에 Runtime Exception을 추가하면  
+이 예외에 해당하는 모두를 catch할 수 있다.
 
 ## 안드로이드 특유의 디버깅
 
@@ -68,7 +70,7 @@ Lint는 컴파일시 에러를 잡아내고 문제가 있다는 것을 알려준
     >> 에러에 관한 검사 정보 보기  
     >> Android > Lint > Correctness
 
-// 린트 검사해보고 검사 결과 이미지 캡쳐해서 첨부!!!!
+![](https://user-images.githubusercontent.com/38287485/45766796-6796d800-bc73-11e8-99b7-7e7bdd4688dd.png)
 
 
 ### R 클래스 관련 문제들

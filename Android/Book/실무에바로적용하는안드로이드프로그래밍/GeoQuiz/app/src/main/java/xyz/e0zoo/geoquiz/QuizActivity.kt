@@ -1,7 +1,9 @@
 package xyz.e0zoo.geoquiz
 
-import android.support.v7.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_quiz.*
@@ -10,7 +12,7 @@ class QuizActivity : AppCompatActivity() {
     companion object {
         private val TAG = QuizActivity::class.java.simpleName
         private const val KEY_INDEX = "index"
-
+        private const val REQUEST_CODE_CHEAT = 0
     }
 
     private val mQuestionBank = listOf(
@@ -22,13 +24,16 @@ class QuizActivity : AppCompatActivity() {
 
     private var mCurrentIndex = 0
 
+    private var mIsCheater: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG,"OnCreate() called")
+        Log.d(TAG, "OnCreate() called")
+
 
         savedInstanceState?.let {
-            mCurrentIndex = it.getInt(KEY_INDEX,0)
+            mCurrentIndex = it.getInt(KEY_INDEX, 0)
         }
 
         setContentView(R.layout.activity_quiz)
@@ -42,69 +47,80 @@ class QuizActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
+            mIsCheater = false
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
             updateQuestion()
         }
 
-        questionTextView.setOnClickListener {
-            updateQuestion()
+        cheatButton.setOnClickListener {
+            val answerIsTrue = mQuestionBank[mCurrentIndex].answerTrue
+            val i = CheatActivity.newIntent(this, answerIsTrue)
+            startActivityForResult(i, REQUEST_CODE_CHEAT)
         }
 
         updateQuestion()
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            data?.let {
+                mIsCheater = CheatActivity.wasAnswerShown(it)
+            }
+        }
+    }
+
     private fun updateQuestion() {
-        //mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
-        val question: Int = mQuestionBank[mCurrentIndex].textResId
-        questionTextView.setText(question)
+        questionTextView.setText(mQuestionBank[mCurrentIndex].textResId)
     }
 
     private fun checkAnswer(userPressedTrue: Boolean) {
 
         val messageResId: Int =
-                if (userPressedTrue == mQuestionBank[mCurrentIndex].answerTrue)
-                    R.string.correct_toast
-                else
-                    R.string.incorrect_toast
-
+                if (mIsCheater) {
+                    R.string.judgment_toast
+                } else {
+                    if (userPressedTrue == mQuestionBank[mCurrentIndex].answerTrue)
+                        R.string.correct_toast
+                    else
+                        R.string.incorrect_toast
+                }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
 
     }
 
-
-
     override fun onStart() {
         super.onStart()
-        Log.d(TAG,"onStart() called")
+        Log.d(TAG, "onStart() called")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG,"onPause() called")
+        Log.d(TAG, "onPause() called")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG,"onResume() called")
+        Log.d(TAG, "onResume() called")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG,"onStop() called")
+        Log.d(TAG, "onStop() called")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG,"onDestroy() called")
+        Log.d(TAG, "onDestroy() called")
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         Log.i(TAG, "onSaveInstanceState")
-        outState?.let {
-            it.putInt(KEY_INDEX,mCurrentIndex)
-        }
+        outState?.putInt(KEY_INDEX, mCurrentIndex)
     }
 
 }

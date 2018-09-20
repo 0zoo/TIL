@@ -21,6 +21,7 @@
             android:id="@+id/trueButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:text="@string/true_button" />
 
         <Button
@@ -35,6 +36,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cheatButton"
+            android:text="@string/cheat_button"
+            />
 
         <Button
             android:layout_width="wrap_content"
