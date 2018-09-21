@@ -5,14 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_quiz.*
+import org.jetbrains.anko.textResource
 
 class QuizActivity : AppCompatActivity() {
     companion object {
         private val TAG = QuizActivity::class.java.simpleName
         private const val KEY_INDEX = "index"
         private const val REQUEST_CODE_CHEAT = 0
+        private const val IS_CHEATER = "IS_CHEATER"
     }
 
     private val mQuestionBank = listOf(
@@ -34,6 +37,7 @@ class QuizActivity : AppCompatActivity() {
 
         savedInstanceState?.let {
             mCurrentIndex = it.getInt(KEY_INDEX, 0)
+            mIsCheater = it.getBoolean(IS_CHEATER, false)
         }
 
         setContentView(R.layout.activity_quiz)
@@ -73,7 +77,8 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        questionTextView.setText(mQuestionBank[mCurrentIndex].textResId)
+        questionTextView.textResource = mQuestionBank[mCurrentIndex].textResId
+        if (mCurrentIndex == mQuestionBank.size - 1) nextButton.visibility = View.GONE
     }
 
     private fun checkAnswer(userPressedTrue: Boolean) {
@@ -120,7 +125,10 @@ class QuizActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         Log.i(TAG, "onSaveInstanceState")
-        outState?.putInt(KEY_INDEX, mCurrentIndex)
+        outState?.apply {
+            putInt(KEY_INDEX, mCurrentIndex)
+            putBoolean(IS_CHEATER, mIsCheater)
+        }
     }
 
 }
