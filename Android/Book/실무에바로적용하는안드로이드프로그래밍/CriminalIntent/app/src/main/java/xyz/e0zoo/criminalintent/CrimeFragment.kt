@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_crime.*
 import kotlinx.android.synthetic.main.fragment_crime.view.*
 
 class CrimeFragment : Fragment() {
@@ -21,20 +20,32 @@ class CrimeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v: View = inflater.inflate(R.layout.fragment_crime, container, false)
 
-        v.crimeTitle.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // 이 메서드의 실행 코드는 여기서는 필요 없음.
-            }
+        with(v) {
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // 이 메서드의 실행 코드는 여기서는 필요 없음.
-            }
+            crimeTitle.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    // 이 메서드의 실행 코드는 여기서는 필요 없음.
+                }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mCrime.title = s.toString()
-                sampleTextView.text = mCrime.toString()
-            }
-        })
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // 이 메서드의 실행 코드는 여기서는 필요 없음.
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    mCrime.title = s.toString()
+                }
+            })
+
+            crimeDate.text = mCrime.date.toString()
+            crimeDate.isEnabled = false
+
+            crimeSolved.setOnCheckedChangeListener { _, isChecked ->
+                mCrime.solved = isChecked }
+
+        }
+
+
+
 
         return v
     }
