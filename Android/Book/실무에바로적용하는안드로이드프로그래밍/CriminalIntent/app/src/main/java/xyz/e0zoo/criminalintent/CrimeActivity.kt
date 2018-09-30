@@ -9,18 +9,17 @@ class CrimeActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_crime)
+        setContentView(R.layout.activity_fragment)
 
         val fm: FragmentManager = supportFragmentManager
 
-        var fragment : Fragment? = fm.findFragmentById(R.id.fragmentContainer)
+        var fragment: Fragment? = fm.findFragmentById(R.id.fragmentContainer)
 
-        if (fragment == null){
+        if (fragment == null) {
             fragment = CrimeFragment()
             fm.beginTransaction()
                     .add(R.id.fragmentContainer, fragment)
                     .commit()
         }
-
     }
 }
