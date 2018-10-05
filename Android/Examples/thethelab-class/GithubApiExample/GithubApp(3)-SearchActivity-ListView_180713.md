@@ -64,13 +64,8 @@ public View getView(int position, View convertView, ViewGroup parent) {
 }
 ```
 ViewHolder Class는 아이템 View가 달라질때 마다 새롭게 생성해야 한다. 즉 Adapter마다 각각의 ViewHolder를 가지고 있어야 한다. 아이템 View가 바뀌게 되면 ViewHolder도 같이 수정되어야 하기때문에 유지/보수 면에서는 좋은 구조는 아니다.  
-좀 더 유연하게 하기 위해서는 ViewHolder를 정적이아닌 **동적**으로 변경이 가능한 구조로 하꿔야 한다.
+좀 더 유연하게 하기 위해서는 ViewHolder를 정적이아닌 **동적**으로 변경이 가능한 구조로 ㅂㅏ꿔야 한다.
 
-
-
-
-참고:
-http://www.kmshack.kr/2014/08/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-ui%EC%B5%9C%EC%A0%81%ED%99%94-%EB%A6%AC%EC%8A%A4%ED%8A%B8%EB%B7%B0-%EC%84%B1%EB%8A%A5%EC%B5%9C%EC%A0%81%ED%99%94/
 
 ----
 
