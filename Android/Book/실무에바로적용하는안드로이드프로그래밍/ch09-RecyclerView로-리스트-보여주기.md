@@ -303,15 +303,133 @@ class CrimeListFragment extends Fragment {
 }
 ```
 
+```
+// 초기 버전의 어댑터
+```
+
+RecyclerView 자신은 Crime 객체에 대해 아무것도 모른다.  
+그러나 어댑터는 Crime의 모든 것을 안다.  
+
+```
+// CrimeAdapter의 메서드 추가하기
+```
+
+오버라이드 한 3개의 메서드
+`onCreateViewHolder()`, `onBindViewHolder()`, `getItemCount()`
+
+`onCreateViewHolder()`는 리사이클러뷰에 의해 호출.
+
+마지막으로 이 어댑터를 리사이클러뷰에 연결하면 된다.
+
+```java
+// CrimeListFragment의 사용자 인터페이스를 설정하는 메서드
+private void updateUI(){
+	CrimeLab crimeLab = CrimeLab.get(getActivity());
+	List<Crime> crimes = crimeLab.getCrimes();
+
+	mAdapter = new CrimeAdapter(crimes);
+	mCrimeRecyclerView.setAdapter(mAdaper);
+}
+```
+
 ## 리스트 항목의 커스터마이징
 
 ### 리스트 항목의 레이아웃 생성하기
 
+RelativeLayout에서는 레이아웃 매개변수를 사용하여 루트 레이아웃에서 상대적으로 자식 뷰를 배열할 수 있다.
+
 ### 커스텀 항목 뷰 사용하기
+
+```kotlin
+//뷰를 생성하고 뷰 홀더에 넣는다.
+override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
+	val layoutInflater = LayoutInflater.from(activity)
+	val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
+	return CrimeHolder(view)
+}
+
+// findViewById는 시간이 좀 걸릴 수 있어
+// onCreateViewHolder()에서만 CrimeHolder의 생성자를 호출하고
+// 결과로 반환된 뷰의 참조를 변수에 저장한다.
+// onBindViewHolder()가 호출될 때는 이미 뷰 객체들을 찾은 상태가 되며, 
+// 이런 방법이 바람직하다.
+// 이유 : onBindViewHolder()가 더 빈번하게 호출되기 때문.
+
+override fun onBindViewHolder(holder: CrimeHolder, position: Int){
+	val crime = mCrimes[position]
+	holder.mTitleTextView.text = crime.title
+}
+
+override fun getItemCount(): Int = mCrimes.size
+```
+
+```kotlin
+private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+	init {
+		val mTitleTextView: TextView = itemView.listItemCrimeTitleTextView as TextView
+		//val mTitleTextView = findViewById<TextView>(R.id.list_item_crime_title_text_view)
+		// mDateTextView, mSolvedCheckBox ... 
+	}
+}
+```
+
+```
+// CrimeHolder에서 뷰와 데이터 결합하기
+```
 
 ## 리스트 항목 선택에 응답하기
 
+각 항목의 뷰는 자신과 연관된 뷰홀더를 갖고 있으므로
+뷰홀더에서 온클릭리스너를 구현한다.
+
+```
+// CrimeHolder에서 터치 이벤트 처리하기
+```
+
 ## ListView와 GridView
 
+ListView나 GridView는 여러 항목들을 스크롤할 수 있게 해준다.  
+Adapter는 리스트의 각 항목 뷰 생성 책임 가짐.
+
+- ListView와 GridView 문제점
+    * 뷰홀더 패턴의 사용을 강제하지 않는다.
+    * Item Layout의 형태를 변경할 수 없다.
+    * 타입 안정성이 없다.
+
+- **ViewHolder Pattern** :  
+    - 매번 `findViewById()`를 호출하는 것은 비효율적이다.
+    - convertView의 tag에 모든 View의 정보를 저장해놓고 **재활용**하여 사용.  
+    - Adapter마다 각각의 ViewHolder를 가지고 있어야 한다.  
+    - 아이템 뷰가 바뀌면 ViewHolder도 같이 수정되어야 하기 때문에 유지/보수 면에서는 좋은 구조는 아니다.  
+    유연하게 하기 위해서는 ViewHolder를 동적 변경이 가능한 구조로 바꿔야 한다.  
+
+https://github.com/0zoo/TIL/blob/master/Android/Examples/thethelab-class/GithubApiExample/GithubApp(4)-SearchActivity-RecyclerView_180713.md
+
+
+* ListView보다 RecyclerView를 권장하는 이유
+
+	* RecyclerView는 ViewHolder 패턴의 사용을 강제한다.
+
+	* ListView는 수직 스크롤만 가능하지만 RecyclerView는 수평 스크롤도 지원할 뿐만 아니라 더 다양한 형태의 레이아웃을 제공해 줌. (애니메이션 기능 내장)
+
+
 ## 싱글톤
+
+싱글톤은 앱의 유지 보수를 어렵게 만드는 형태로 잘못 사용될 수 있다.
+
+싱글톤은 프래그먼트나 액티비티보다 더 오래 존재.  
+또한 장치를 회전시켜도 존재하고 액티비티와 프래그먼트를 오갈 때에도 여전히 존재함.  
+
+싱글톤을 사용하면 모델 객체를 소유하는 클래스를 편리하게 만들 수 있다는 장점.  
+
+싱글톤의 단점:  
+1. 싱글톤은 컨트롤러보다 더 오랜 생애동안 데이터를 저장하고 있긴 하지만 결국 싱글톤도 생애를 가지고 있기 때문에 어느 순간 소멸된다.  
+-> 싱글톤은 장기간에 걸쳐 데이터를 저장하는 해결책은 아니다.
+
+2. 싱글톤은 우리 코드의 단위 테스트를 어렵게 만든다.  
+(실제 안드로이드 개발자들은 dependency injector라는 도구를 사용해서 그런 문제를 해결한다. 이 도구는 객체가 싱글톤으로 공유 가능하게 해줌.)
+
+3. 싱글톤은 잘못 사용될 수 있다. 편리해서 남용될 수 있다.  
+코드의 어디에서나 싱글톤 인스턴스를 얻을 수 있으며, 필요한 데이터가 무엇이든 나중에 저장할 수 있기 때문.  
+그러므로 그 데이터가 어디에서 사용되고 얼마나 중요한지를 알아야 한다.
 
