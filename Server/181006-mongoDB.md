@@ -238,7 +238,193 @@ $ mongo --port 27000 -u admin -p linux123 --authenticationDatabase 'admin'
 
 ## node
 
-todolist-server 폴더 만들고
+todolist-server 폴더 만들고 
+
+```
+$ npm init
+```
+
+미들웨어로 사용할 koa 설치하기
+
+```
+$ npm i koa
+```
+
+```javascript
+// require: Java의 import와 동일한 개념 
+const Koa = require("koa");
+// 대문자와 소문자 구별하기.
+// 대문자는 객체 또는 클래스
+// 소문자는 이미 생성된 인스턴스
+```
+
+- 컴파일 언어:  
+    - C, C++, Java, C#  
+    - Source -> Binary  
+    - 성능 저하 없음. 진입 장벽이 있음.
+- 스크립트 언어:  
+    - 컴파일 단계가 존재하지 않음.  
+    - Runtime이라고 부르는 스크립트 해석기  
+    => 인터프리터  
+    인터프리터가 코드를 실시간으로 해석해서 수행한다.  
+    - line by line으로 인해 성능 저하가 있음.  
+    - 최적화 방법: hotspot (성능적으로 cpu를 많이 잡아먹는 부분은 미리 컴파일하는 방법)
+
+Javascript - Web Client
+
+**Node.js**
+  : 비동기 기반의 프레임워크  
+  Javascript를 브라우저가 아닌 네이티브(Windows, Linux, Mac)에서 수행할 수 있도록 해주는 플랫폼.
+
+- WAS Middleware: express, koa, restify, Hapi, ...
+
+레트로핏의 장점? 보일러플레이트를 관리해준다.
+
+```javascript
+// server.js
+const Koa = require('koa');
+const Router = require('koa-router');
+
+const app = new Koa();
+const router = new Router();
+
+router.get('/', function(ctx){
+    ctx.body = "hello world"
+});
+
+app.use(router.routes())
+    .use(router.allowedMethods());
+
+app.listen(3000);
+```
+
+```
+$ npm i koa-logger
+```
+
+```javascript
+const logger = require('koa-logger');
+
+app.use(logger());
+// 미들웨어들끼리 충돌할 수 있어
+// 순서가 중요하다.
+// app.use(router.routes()) 얘보다 위에 있어야 함.
+```
+
+logger.js 파일 추가하고,
+middlewares 디렉토리를 만들자.
+
+```
+$ npm i bunyan
+```
+
+```javascript
+// logger.js
+
+"use strict"
+// 자바스크립트가 가지고 있는 표준 제약을 사용하겠다.
+// 일관성을 가지도록
+
+const bunyan = require("bunyan");
+const name = "todolist-server";
+
+const config = { 
+// const config = require("./config/logger");
+// require은 해당 파일에서 모듈의 export를 통해 객체를 가져오는 것.
+// 파일을 따로 안만들고 config를 그대로 받아오는 형태로 바로 사용하겠다는 의미.
+    name, // name: name (더 직관적으로 보이도록 생략 가능.)
+    streams: [{
+        type: "stream",
+        stream: process.stdout,
+        level: "debug"
+    }]
+};
+
+const options = {
+    ...config, // flatmap 처럼 작용. 
+    serializers: bunyan.stdSerializers, 
+    // bunyan.stdSerializers: 
+    // bunyan이 제공하는 request, response를 내부적으로 어떻게 처리할지를 결정해주는 기능.
+};
+
+const logger = bunyan.createLogger(options);
+module.exports = logger;
+// 모듈의 exports에 로거를 등록하면 
+// 외부에서 require를 통해 등록된 로거를 가져올 수 있다.
+```
+
+```javascript
+// server.js
+
+const Koa = require('koa');
+const Router = require('koa-router');
+
+// const logger = require('koa-logger')
+const logger = require('./logger'); // ./logger.js
+
+const app = new Koa();
+const router = new Router();
+
+const logHandler = require("./middlewares/logHandler");
+
+app.use(logHandler({
+  logger,
+}));
+
+router.get('/', function(ctx){
+    ctx.body = "Hello, TODO Service"
+});
+
+// app.use(logger())
+// 는 이제 사용 불가.
+// 미들웨어가 제공하는 기본 형식을 따라야한다.
+// 인터페이스를 암묵적으로 약속한다.
+// => 별도의 logHandler를 만들어 사용한다.
+
+app.use(router.routes())
+    .use(router.allowedMethods());
+
+app.listen(3000);
+```
+
+```javascript
+// logHandler.js
+"use strict"
+
+const bunyan = require('bunyan');
+const _ = require('lodash');
+
+const log = function({
+    logger = null  // logger의 디폴트값 null
+} = {}){ 
+    // ==(객체 동등성), ===(참조 동등성)
+    // 암묵적 형변환으로 인한 자바스크립트의 삼위일체 문제 
+    // undefined의 위험성을 방지하기 위해서 lodash를 사용하자.
+    if(_.isNil(logger)){
+    // _.isNil(value): Checks if value is null or undefined.
+        throw Error("Logger is required");
+    }
+    return function(ctx, next){ 
+        // ctx: request, response 정보.
+        // next: 다음 미들웨어로 pass 또는 block할 수 있도록 하는 것.
+        // 미들웨어는 요청이 들어올때마다 자동적으로 호출되기 때문에 보일러플레이트를 줄일 수 있음.
+        logger.info("hello");
+        next();
+    };
+    // 함수를 반환하는 함수: 고차함수
+}
+
+module.exports = log;
+```
+
+- **AOP**(Aspect Oriented Programming)
+    - 관점(관심) 지향 프로그래밍
+    - 공통모듈(트랜잭션/로그/보안/인증 처리 등)을 만든 후에 코드 밖에서 이 모듈을 비지니스 로직에 삽입하는 것
+
+
+
+
+
 
 
 
