@@ -44,9 +44,6 @@ class CrimeFragment : Fragment() {
 
         }
 
-
-
-
         return v
     }
 }

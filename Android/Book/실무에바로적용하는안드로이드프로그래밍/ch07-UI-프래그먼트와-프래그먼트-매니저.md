@@ -201,33 +201,21 @@ override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saved
 
 ## UI 프래그먼트를 FragmentManager에 추가하기
 
-프래그먼트 클래스가 허니콤 버전에 추가되면서  
-FragmentManager를 호출하는 코드를 포함하도록 Activity 클래스가 변경되었다.
-
-- **FragmentManager**: 
-    - 프래그먼트를 관리해줌.  
-    - 액티비티 뷰 계층에 프래그먼트 뷰를 추가해줌.
-
 ![](https://cdn-images-1.medium.com/max/1600/1*TULxEYpKqkxUNx2W4w-9xQ.png)
 
-- FragmentManager는  
+- **FragmentManager**: 프래그먼트를 관리.  
+액티비티 뷰 계층에 프래그먼트 뷰를 추가해준다.   
 프래그먼트 리스트와 FragmentTransaction의 Back Stack을 처리한다.
 
 
 1. FragmentManager 인스턴스 얻기
     ```kotlin
-    class CrimeActivity : FragmentActivity() {
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            ...
-            val fm: FragmentManager = supportFragmentManager
-        }
-    }
+    val fm: FragmentManager = supportFragmentManager
     ```
     - 주의 : `import android.support.v4.app.FragmentManager`
     - **`supportFragmentManager`** 를 사용하는 이유:  
     지원 라이브러리와 FragmentActivity 클래스를 사용하기 때문.  
-    허니콤 이전 장치를 지원하지 않는다면 FragmentActivity 대신 Activity의 서브 클래스로 지정하고 `getFragmentManager()`를 사용하면 됨.
+    (허니콤 이전 지원 x -> FragmentActivity 대신 Activity의 서브 클래스로 지정하고 `getFragmentManager()`를 사용.)
 
 ### 프래그먼트 트랜잭션
 
@@ -244,36 +232,46 @@ if(fragment == null){
 ```
 
 - **프래그먼트 트랜잭션**: 
-    - 프래그먼트를 사용해서 런타임 시에 화면을 구성 또는 재구성하는 방법.
-    - 프래그먼트 리스트에 add, remove, attach, detach, replace하는 데 사용됨.
-    - FragmentManager는 프래그먼트 트랜잭션의 back stack을 유지 관리함.
+    - 프래그먼트를 사용해 런타임 시에 화면을 구성하는 방법
+    - 프래그먼트 리스트에 add, remove, attach, detach, replace
+    - FragmentManager는 프래그먼트 트랜잭션의 back stack을 유지 관리함
 
-- `FragmentManager.beginTransaction()`은 FragmentTransaction의 인스턴스를 생성하여 반환한다.  
-FragmentTransaction 클래스는 **fluent interface**를 사용한다.  
-    - fluent interface: 코드를 이해하기 쉽게 해주는 객체지향 기법.  
-    일반적으로 메서드의 연쇄 호출 형태로 구현됨.
-즉, FragmentTransaction을 구성하는 메서드들이 void 대신 FragmentTransaction 객체를 반환하기 때문에 그 메서드들을 연속적으로 연결해서 호출할 수 있다.  
-> 새로운 프래그먼트 트랜잭션 인스턴스를 생성하고 그 인스턴스에 프래그먼트 객체를 추가한 후 커밋한다.
+- `FragmentManager.beginTransaction()`는 FragmentTransaction의 인스턴스 반환한다.  
+    - **fluent interface**(코드를 이해하기 쉽게 해주는 객체지향 기법.일반적으로 메서드 연쇄 호출 형태) 사용함.  
+    
+    - 프래그먼트 트랜잭션 인스턴스를 생성하고, 프래그먼트 객체 추가 후 커밋
 
 - 컨테이너 뷰 ID의 목적: 
-    - 액티비티 뷰의 어디에 프래그먼트 뷰가 나타나야 하는지를 FragmentManager에 알려준다.
-    - FragmentManager의 리스트에서 프래그먼트를 고유하게 식별하는 데 사용된다.
+    - 어디에 프래그먼트 뷰가 나타나야 하는지
+    - 리스트에서 프래그먼트를 고유하게 식별하는 데
+  
+```java
+// 프래그먼트 매니저로부터 CrimeFragment를 가져오기
+Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+```
 
-프래그먼트 매니저로부터 CrimeFragment를 가져오기 :  
-`Fragment fragment = fm.findFragmentById(R.id.fragment_container);`
+`R.id.fragment_container`와 연관된 프래그먼트를 프래그먼트 매니저에 요청한다. 
 
-컨테이너 뷰의 리소스 아이디로 UI 프래그먼트를 식별하는 것이 프래그먼트 매니저가 동작하는 방법이다.  
-만일 하나의 액티비티에 여러 개의 프래그먼트를 추가한다면 각 프래그먼트에 대해 별도의 리소스 아이디를 갖는 컨테이너 뷰를 생성하게 될 것.
+1. 요청한 프래그먼트가 리스트에 이미 있는 경우:
+해당 프래그먼트 반환.    
+이미 있는 이유: 액티비티가 소멸되었다가 다시 생성될 때를 대비해서 리스트에 보존하기 때문. 새로운 프래그먼트 매니저가 그 리스트를 읽고 프래그먼트들을 다시 생성 및 복원한다.  
 
-`R.id.fragment_container`의 컨테이너 뷰 아이디와 연관된 프래그먼트를 프래그먼트 매니저에 요청한다.  
-만일 그 프래그먼트가 리스트에 이미 있으면 프래그먼트 매니저가 그것을 반환할 것이다.  
-요청한 프래그먼트가 리스트에 이미 있는 이유? 액티비티가 소멸되었다가 다시 생성될 때를 대비해서 리스트에 보존하기 때문.  
-즉, 장치가 회전되거나 안드로이드 운영체제의 메모리 회수로 인해 액티비티가 소멸되었다가 다시 생성되면 새로운 프래그먼트 매니저 인스턴스가 그 리스트를 읽어서 리스트에 있는 프래그먼트들을 다시 생성하여 이전 상태로 복원한다.  
-지정된 컨테이너 뷰 아이디의 프래그먼트가 리스트에 없다면 프래그먼트는 null이 될 것이다.  
-이런 경우, 우리는 새로운 크라임 프래그먼트와 새로운 프래그먼트 트랜잭션(프래그먼트를 리스트에 추가하는)을 생성한다.
+2. 요청한 프래그먼트가 리스트에 없는 경우:  
+프래그먼트 null -> 새로운 크라임 프래그먼트와 새로운 프래그먼트 트랜잭션 생성.
 
 
 ### FragmentManager와 프래그먼트 생명주기
+
+프래그먼트 매니저는 리스트 안에 있는 프래그먼트의 생명주기 메서드를 호출하는 책임을 갖는다.
+
+프래그먼트 매니저는 프래그먼트가 호스팅 액티비티의 상태를 따라잡도록 도와준다.
+
+- 이미 실행 중인 액티비티에 프래그먼트 추가할 때:  
+`onAttach(Activity)`, `onCreate(Bundle)`, `onCreateView(...)`, `onActivityCreated(Bundle)`, `onStart()`, `onResume()` 순서
+
+상태를 따라잡으면  
+안드로이드 운영체제로부터 액티비티 생명주기 메서드들이 호출될 때 그것과 부합하는 프래그먼트 생명주기 메서드들도 호출될 것.
+
 
 ## 프래그먼트 사용 시의 애플리케이션 아키텍처
 
@@ -307,3 +305,7 @@ FragmentTransaction 클래스는 **fluent interface**를 사용한다.
 API 레벨 11 이상의 버전에서는 액티비티에서 자체적으로 프래그먼트를 지원하기 때문
 2. `android.app.Fragment`의 서브 클래스로 프래그먼트 클래스를 생성한다.
 3. 프래그먼트 매니저 객체를 얻을 때 `getFragmentManager()`를 사용한다.
+
+
+
+

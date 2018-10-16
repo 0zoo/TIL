@@ -4,21 +4,19 @@
 
 ### 싱글톤과 집중 데이터 스토리지
 
-- **singleton** : 딱 하나의 인스턴스만 생성할 수 있는 클래스.  
-
 싱글톤은 애플리케이션이 메모리에 있는 한 계속 존재한다.  
 -> 리스트를 싱글톤에 저장하면 액티비티와 프래그먼트의 생명주기가 변경되는 동안에도 항상 범죄 데이터를 사용할 수 있다.  
 
 - 싱글톤 사용시 **주의점** : 메모리에서 제거되면 소멸될 수 있음.  
--> `CrimeLab 싱글톤`은 장기간의 데이터 보존을 위한 솔루션은 아니다.  
+-> 장기간 데이터 보존 적합 x.  
 --> 그러나 `CrimeLab`만이 범죄 데이터를 소유함으로써  
 컨트롤러와의 데이터 전달을 쉽게 할 수 있다는 장점이 있음.
 
+- **singleton** : 딱 하나의 인스턴스만 생성할 수 있는 클래스.  
 
-
-1. `private 생성자`와 `get()` 메서드를 각각 하나씩 갖는다.
-2. 자신의 인스턴스가 이미 있다면 `get()`에서 기존 인스턴스를 반환한다.
-3. 인스턴스가 없다면 `get()`에서 생성자를 호출하여 인스턴스를 생성한 후 반환한다.
+- `private 생성자`와 `get()` 메서드를 각각 하나씩 갖는다.
+    - 인스턴스가 이미 있다면 `get()`에서 기존 인스턴스를 반환한다.
+    - 인스턴스가 없다면 `get()`에서 생성자를 호출하여 인스턴스를 생성한 후 반환한다.
 
 
 ```java
@@ -111,10 +109,9 @@ fragment = createFragment();
 
 
 ```java
+// 프래그먼트 인스턴스 생성에 사용되는 추상 메서드
 protected abstract Fragment createFragment();
-// 이 추상 메서드는 프래그먼트 인스턴스 생성에 사용된다.
-// SingleFragmentActivity의 서브 클래스애서는 
-// 이 메서드를 구현하여 
+// SingleFragmentActivity의 서브 클래스에서는 이 메서드를 구현하여 
 // 액티비티가 호스팅하는 프래그먼트 인스턴스를 반환해야 한다.
 ```
 
@@ -159,20 +156,14 @@ CrimeListActivity를 론처 액티비티로 선언하자.
 
 RecyclerView는 ViewGroup의 서브 클래스로, 자식 뷰 객체들의 리스트를 보여준다.  
 
-
-리스트에 있는 모든 항목에 대해 텍스트뷰를 하나씩 만들면 많은 부담이 될 것.
-
-- 필요할 때만 View 객체를 생성하는 것이 바람직하다.
-
-- RecyclerView는 필요한 뷰 객체만 생성하고, 끊임없이 뷰를 재활용한다.
-
+리스트에 있는 모든 항목을 만들면 많은 부담이 될 것.
 
 ### ViewHolder와 Adapter
 
-RecyclerView는 뷰를 재활용하고 화면에 보여주는 책임만 갖는다.
+RecyclerView는 **뷰를 재활용**하고 **화면에 보여주는 책임만** 갖는다.
 
 
-1. ViewHolder  
+1. **ViewHolder**  
 : 하나의 View를 보존하는 일.  
     ![image116](https://user-images.githubusercontent.com/38287485/46277366-ece88980-c59d-11e8-989d-c955bca3d47b.jpg)
 
@@ -180,18 +171,15 @@ RecyclerView는 뷰를 재활용하고 화면에 보여주는 책임만 갖는�
 // 일반적인 ViewHolder의 서브 클래스
 public class ListRow extends RecyclerView.ViewHolder {
     public ImageView mThumbnail;
-    
     public ListRow(View itemView) {
         super(itemView);
         mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     }
 }
 ```
-
 ```java
 // 일반적인 ViewHolder의 사용 예
 ListRow row = new ListRow(inflater.inflate(R.layout.list_row, parent, false));
-// ListRow 인스턴스를 생성
 View view = row.itemView;
 // itemView는 슈퍼 클래스인 RecyclerView.ViewHolder가 지정해준 필드
 // super(itemView)의 인자로 전달한 View 객체 참조를 보존한다.
@@ -199,7 +187,8 @@ View view = row.itemView;
 ImageView thumbnailView = row.mThumbnail;
 ```
 
-RecyclerView는 자신이 뷰 객체를 생성하지 않고 Adapter를 통해서 ViewHolder 객체를 생성하고 사용한다.  
+RecyclerView는 자신이 뷰 객체를 생성하지 않고  
+**Adapter를 통해서 ViewHolder 객체를 생성하고 사용**한다.  
 ViewHolder는 자신의 itemView로 뷰 객체를 가져온다.
 
 ![image117](https://user-images.githubusercontent.com/38287485/46277410-05f13a80-c59e-11e8-8385-5127eb6d4d45.jpg)
@@ -254,7 +243,6 @@ implementation 'com.android.support:recyclerview-v7:27.1.1'
 class CrimeListFragment : Fragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
        
         view.crimeRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -276,114 +264,87 @@ LayoutManager는 여러 종류가 있다.( LinearLayoutManager, GridLayoutManage
 
 ### 어댑터와 ViewHolder 구현하기
 
-```kotlin
-class CrimeListFragment : Fragment() {
-    ...
-
-    private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        init {
-            val mTitleTextView: TextView = itemView as TextView
-        }
-    }
-}
-```
-
 ```java
-class CrimeListFragment extends Fragment {
-    ...
+// 간단한 뷰홀더
+private class CrimeHolder extends RecyclerView.ViewHolder{
+    pulbic TextView mTitleTextView;
 
-    private class CrimeHolder extends RecyclerView.ViewHolder{
-        pulbic TextView mTitleTextView;
-
-        public CrimeHolder(View itemView){
-            super(itemView);
-            mTitleTextView = (TextView) itemView;
-        }
+    public CrimeHolder(View itemView){
+        super(itemView);
+        mTitleTextView = (TextView) itemView;
     }
 }
-```
-
-```
-// 초기 버전의 어댑터
 ```
 
 RecyclerView 자신은 Crime 객체에 대해 아무것도 모른다.  
 그러나 어댑터는 Crime의 모든 것을 안다.  
 
-```
-// CrimeAdapter의 메서드 추가하기
-```
+```java
+private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
 
-오버라이드 한 3개의 메서드
-`onCreateViewHolder()`, `onBindViewHolder()`, `getItemCount()`
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false)
+        return CrimeHolder(view)
+    }
+
+    override fun getItemCount(): Int = crimes.size
+
+    override fun onBindViewHolder(holder: CrimeHolder, position: Int){
+        holder.mTitleTextView.text = crimes[position].title
+    } 
+}
+```
 
 `onCreateViewHolder()`는 리사이클러뷰에 의해 호출.
 
-마지막으로 이 어댑터를 리사이클러뷰에 연결하면 된다.
-
-```java
-// CrimeListFragment의 사용자 인터페이스를 설정하는 메서드
-private void updateUI(){
-	CrimeLab crimeLab = CrimeLab.get(getActivity());
-	List<Crime> crimes = crimeLab.getCrimes();
-
-	mAdapter = new CrimeAdapter(crimes);
-	mCrimeRecyclerView.setAdapter(mAdaper);
-}
+```kotlin
+// 어댑터를 리사이클러뷰에 연결
+crimeRecyclerView.adapter = CrimeAdapter(CrimeLab.getCrimes())
 ```
 
 ## 리스트 항목의 커스터마이징
 
 ### 리스트 항목의 레이아웃 생성하기
 
-RelativeLayout에서는 레이아웃 매개변수를 사용하여 루트 레이아웃에서 상대적으로 자식 뷰를 배열할 수 있다.
-
 ### 커스텀 항목 뷰 사용하기
 
 ```kotlin
-//뷰를 생성하고 뷰 홀더에 넣는다.
+// 뷰를 생성하고 뷰 홀더에 넣는다.
 override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
-	val layoutInflater = LayoutInflater.from(activity)
-	val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
-	return CrimeHolder(view)
+    val layoutInflater = LayoutInflater.from(parent.context)
+    val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
+    return CrimeHolder(view)
 }
 
-// findViewById는 시간이 좀 걸릴 수 있어
+// findViewById는 시간이 좀 걸릴 수 있어,
 // onCreateViewHolder()에서만 CrimeHolder의 생성자를 호출하고
 // 결과로 반환된 뷰의 참조를 변수에 저장한다.
-// onBindViewHolder()가 호출될 때는 이미 뷰 객체들을 찾은 상태가 되며, 
-// 이런 방법이 바람직하다.
+// onBindViewHolder()가 호출될 때는 이미 뷰 객체들을 찾은 상태가 되며, 이런 방법이 바람직하다.
 // 이유 : onBindViewHolder()가 더 빈번하게 호출되기 때문.
 
-override fun onBindViewHolder(holder: CrimeHolder, position: Int){
-	val crime = mCrimes[position]
-	holder.mTitleTextView.text = crime.title
-}
+override fun onBindViewHolder(holder: CrimeHolder, position: Int) = holder.bindCrime(crimes[position])
 
-override fun getItemCount(): Int = mCrimes.size
-```
-
-```kotlin
-private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-	init {
-		val mTitleTextView: TextView = itemView.listItemCrimeTitleTextView as TextView
-		//val mTitleTextView = findViewById<TextView>(R.id.list_item_crime_title_text_view)
-		// mDateTextView, mSolvedCheckBox ... 
-	}
-}
-```
-
-```
-// CrimeHolder에서 뷰와 데이터 결합하기
+override fun getItemCount(): Int = crimes.size
 ```
 
 ## 리스트 항목 선택에 응답하기
 
-각 항목의 뷰는 자신과 연관된 뷰홀더를 갖고 있으므로
-뷰홀더에서 온클릭리스너를 구현한다.
+ViewHolder에서 OnClickListener를 구현한다.
 
-```
-// CrimeHolder에서 터치 이벤트 처리하기
+```kotlin
+private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    ...
+    
+    init {
+        itemView.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View) {
+        Toast.makeText(v.context, "${crime.title} 선택됨!", Toast.LENGTH_SHORT).show()
+    }
+    ...
+}
 ```
 
 ## ListView와 GridView
