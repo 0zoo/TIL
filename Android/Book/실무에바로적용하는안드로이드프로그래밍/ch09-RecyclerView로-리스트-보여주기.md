@@ -267,7 +267,7 @@ LayoutManager는 여러 종류가 있다.( LinearLayoutManager, GridLayoutManage
 ```java
 // 간단한 뷰홀더
 private class CrimeHolder extends RecyclerView.ViewHolder{
-    pulbic TextView mTitleTextView;
+    public TextView mTitleTextView;
 
     public CrimeHolder(View itemView){
         super(itemView);
@@ -279,8 +279,9 @@ private class CrimeHolder extends RecyclerView.ViewHolder{
 RecyclerView 자신은 Crime 객체에 대해 아무것도 모른다.  
 그러나 어댑터는 Crime의 모든 것을 안다.  
 
-```java
-private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+```kotlin
+inner class CrimeAdapter(private val crimes: List<Crime>) 
+: RecyclerView.Adapter<CrimeHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -333,7 +334,7 @@ override fun getItemCount(): Int = crimes.size
 ViewHolder에서 OnClickListener를 구현한다.
 
 ```kotlin
-private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+inner class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
     ...
     
     init {
@@ -341,7 +342,7 @@ private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), V
     }
 
     override fun onClick(v: View) {
-        Toast.makeText(v.context, "${crime.title} 선택됨!", Toast.LENGTH_SHORT).show()
+        //...
     }
     ...
 }

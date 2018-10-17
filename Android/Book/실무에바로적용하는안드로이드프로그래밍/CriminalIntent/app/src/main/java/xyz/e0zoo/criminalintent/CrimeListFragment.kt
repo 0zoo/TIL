@@ -7,28 +7,42 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.TextView
-import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_crime_list.view.*
 import kotlinx.android.synthetic.main.list_item_crime.view.*
 
 class CrimeListFragment : Fragment() {
 
+    private lateinit var mCrimeRecyclerView: RecyclerView
+    private var mAdapter: CrimeAdapter? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
 
-        with(view) {
-            crimeRecyclerView.layoutManager = LinearLayoutManager(activity)
-            crimeRecyclerView.adapter = CrimeAdapter(CrimeLab.getCrimes())
-        }
+        mCrimeRecyclerView = view.crimeRecyclerView
+        mCrimeRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        updateUI()
 
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
 
-    private class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    private fun updateUI() {
+        if (mAdapter == null) {
+            mAdapter = CrimeAdapter(CrimeLab.getCrimes())
+            mCrimeRecyclerView.adapter = mAdapter
+        } else {
+            mAdapter!!.notifyDataSetChanged()
+        }
+    }
+
+
+    inner class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private lateinit var crime: Crime
 
         init {
@@ -46,11 +60,12 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View) {
-            Toast.makeText(v.context, "${crime.title} 선택됨!", Toast.LENGTH_SHORT).show()
+            val intent = CrimePagerActivity.newIntent(this@CrimeListFragment.requireContext(), crime.id)
+            startActivity(intent)
         }
     }
 
-    private class CrimeAdapter(val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+    inner class CrimeAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
