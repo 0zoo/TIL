@@ -15,6 +15,7 @@ class CrimeFragment : Fragment() {
 
     companion object {
         private const val ARG_CRIME_ID = "crime_id"
+        private const val DIALOG_DATE = "DialogDate"
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
@@ -53,7 +54,10 @@ class CrimeFragment : Fragment() {
             })
 
             crimeDate.text = mCrime.date.toString()
-            crimeDate.isEnabled = false
+            //crimeDate.isEnabled = false
+            crimeDate.setOnClickListener {
+                DatePickerFragment().show(fragmentManager, DIALOG_DATE)
+            }
 
             crimeSolved.isChecked = mCrime.solved
 
