@@ -1,5 +1,7 @@
 package xyz.e0zoo.criminalintent
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
@@ -7,15 +9,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import kotlinx.android.synthetic.main.fragment_crime.view.*
 import java.util.*
 
 class CrimeFragment : Fragment() {
     private lateinit var mCrime: Crime
+    private lateinit var mDateButton: Button
 
     companion object {
         private const val ARG_CRIME_ID = "crime_id"
         private const val DIALOG_DATE = "DialogDate"
+        private const val REQUEST_DATE = 0
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
@@ -24,6 +29,21 @@ class CrimeFragment : Fragment() {
             crimeFragment.arguments = args
             return crimeFragment
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode != Activity.RESULT_OK) return
+
+        if(requestCode == REQUEST_DATE){
+            val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
+            mCrime.date = date
+            updateDate()
+        }
+    }
+
+
+    private fun updateDate() {
+        mDateButton.text = mCrime.date.toString()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +73,17 @@ class CrimeFragment : Fragment() {
                 }
             })
 
-            crimeDate.text = mCrime.date.toString()
-            //crimeDate.isEnabled = false
+            mDateButton = crimeDate
+
+            updateDate()
+
             crimeDate.setOnClickListener {
-                DatePickerFragment().show(fragmentManager, DIALOG_DATE)
+
+                DatePickerFragment.newInstance(mCrime.date).let {
+                    it.setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                    it.show(fragmentManager, DIALOG_DATE)
+                }
+
             }
 
             crimeSolved.isChecked = mCrime.solved
@@ -64,7 +91,6 @@ class CrimeFragment : Fragment() {
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 mCrime.solved = isChecked
             }
-
         }
 
         return v
