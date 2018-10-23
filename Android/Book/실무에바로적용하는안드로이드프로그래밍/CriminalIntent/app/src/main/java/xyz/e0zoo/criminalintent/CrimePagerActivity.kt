@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_crime_pager.*
 import java.util.*
 
-class CrimePagerActivity : FragmentActivity() {
+class CrimePagerActivity : AppCompatActivity() {
 
     companion object {
         private val EXTRA_CRIME_ID = "${CrimePagerActivity::class.java.`package`.name}.crime_id"
@@ -42,7 +42,7 @@ class CrimePagerActivity : FragmentActivity() {
                 break
             }
         }
-
     }
+
 }
 

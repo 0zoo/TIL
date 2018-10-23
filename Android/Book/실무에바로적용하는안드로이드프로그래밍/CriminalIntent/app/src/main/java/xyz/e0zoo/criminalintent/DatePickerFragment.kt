@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.dialog_date.view.*
 import java.util.*
@@ -47,6 +46,7 @@ class DatePickerFragment : DialogFragment() {
         val v = LayoutInflater.from(requireActivity()).inflate(R.layout.dialog_date, null)
         v.dialogDatePicker.init(year, month, day, null)
 
+
         return AlertDialog.Builder(requireActivity())
                 .setView(v)
                 .setTitle(R.string.date_picker_title)
@@ -58,5 +58,6 @@ class DatePickerFragment : DialogFragment() {
                 }
                 .create()
     }
+
 
 }
