@@ -40,7 +40,7 @@ class CrimeListFragment : Fragment() {
         return when (item?.itemId) {
             R.id.menu_item_new_crime -> {
                 val crime = Crime()
-                CrimeLab.addCrime(crime)
+                CrimeLab.get(requireContext()).addCrime(crime)
                 startActivity(CrimePagerActivity.newIntent(requireContext(), crime.id))
                 true
             }
@@ -82,7 +82,7 @@ class CrimeListFragment : Fragment() {
 
     private fun updateUI() {
         if (mAdapter == null) {
-            mAdapter = CrimeAdapter(CrimeLab.getCrimes())
+            mAdapter = CrimeAdapter(CrimeLab.get(requireContext()).getCrimes())
             mCrimeRecyclerView.adapter = mAdapter
         } else {
             mAdapter!!.notifyDataSetChanged()
@@ -92,7 +92,7 @@ class CrimeListFragment : Fragment() {
 
     @SuppressLint("StringFormatMatches")
     private fun updateSubtitle() {
-        val crimeCount = CrimeLab.getCrimes().size
+        val crimeCount = CrimeLab.get(requireContext()).getCrimes().size
         val activity = requireActivity() as AppCompatActivity
 
         val subtitle: String? = if(!mSubtitleVisible) null else getString(R.string.subtitle_format, crimeCount)

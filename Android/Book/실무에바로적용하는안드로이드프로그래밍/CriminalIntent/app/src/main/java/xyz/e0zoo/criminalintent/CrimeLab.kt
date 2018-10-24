@@ -1,33 +1,85 @@
 package xyz.e0zoo.criminalintent
 
+import android.content.ContentValues
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import xyz.e0zoo.criminalintent.database.CrimeBaseHelper
+import xyz.e0zoo.criminalintent.database.CrimeCursorWrapper
+import xyz.e0zoo.criminalintent.database.CrimeDbSchema.CrimeTable
 import java.util.*
 
-object CrimeLab {
-    private var crimes = arrayListOf<Crime>()
+class CrimeLab private constructor(private val context: Context) {
 
-    init {
-        /*
-        for (i in 0..100) {
-            val crime = Crime()
-            crime.title = "범죄 #$i"
-            crime.solved = i % 2 == 0
-            crimes.add(crime)
+    companion object Factory {
+        fun get(context: Context): CrimeLab = CrimeLab(context)
+        private fun getContentValues(crime: Crime): ContentValues = ContentValues().apply {
+            put(CrimeTable.Cols.UUID, crime.id.toString())
+            put(CrimeTable.Cols.TITLE, crime.title)
+            put(CrimeTable.Cols.DATE, crime.date.time)
+            put(CrimeTable.Cols.SOLVED, if (crime.solved) 1 else 0)
         }
-        */
     }
 
-    fun getCrimes(): List<Crime> = crimes
+    private val mContext: Context by lazy {
+        context.applicationContext
+    }
+
+    private val mDatabase: SQLiteDatabase by lazy {
+        CrimeBaseHelper(mContext).writableDatabase
+    }
+
+    fun getCrimes(): List<Crime> {
+        val crimes = arrayListOf<Crime>()
+        val cursor = queryCrimes(null, null)
+        cursor.use { cursor ->
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast){
+                crimes.add(cursor.getCrime())
+                cursor.moveToNext()
+            }
+        }
+        return crimes
+    }
 
     fun getCrime(id: UUID): Crime? {
-        for (crime in crimes) {
-            if (crime.id == id)
-                return crime
-        }
         return null
     }
 
-    fun addCrime(c: Crime){
-        crimes.add(c)
+    fun addCrime(c: Crime) {
+        val values = getContentValues(c)
+        mDatabase.insert(CrimeTable.NAME, null, values)
     }
+
+    fun updateCrime(crime: Crime) {
+        val uuidString = crime.id.toString()
+        val values = getContentValues(crime)
+        mDatabase.update(CrimeTable.NAME, values,
+                "${CrimeTable.Cols.UUID} = ?", arrayOf(uuidString))
+    }
+
+    /*
+    private fun queryCrimes(whereClause: String, whereArgs: Array<String>): Cursor = mDatabase.query(
+            CrimeTable.NAME,
+            null, // columns - 널인 경우 테이블의 모든 열을 의미
+            whereClause,
+            whereArgs,
+            null, // groupBy
+            null, // having
+            null // orderBy
+    )
+    */
+    private fun queryCrimes(whereClause: String, whereArgs: Array<String>): CrimeCursorWrapper{
+        val cursor = mDatabase.query(
+                CrimeTable.NAME,
+                null, // columns - 널인 경우 테이블의 모든 열을 의미
+                whereClause,
+                whereArgs,
+                null, // groupBy
+                null, // having
+                null // orderBy
+        )
+        return CrimeCursorWrapper(cursor)
+    }
+
 
 }
