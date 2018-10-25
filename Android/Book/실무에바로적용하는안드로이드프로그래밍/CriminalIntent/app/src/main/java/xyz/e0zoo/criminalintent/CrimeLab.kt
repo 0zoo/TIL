@@ -12,6 +12,7 @@ class CrimeLab private constructor(private val context: Context) {
 
     companion object Factory {
         fun get(context: Context): CrimeLab = CrimeLab(context)
+
         private fun getContentValues(crime: Crime): ContentValues = ContentValues().apply {
             put(CrimeTable.Cols.UUID, crime.id.toString())
             put(CrimeTable.Cols.TITLE, crime.title)
@@ -31,19 +32,29 @@ class CrimeLab private constructor(private val context: Context) {
     fun getCrimes(): List<Crime> {
         val crimes = arrayListOf<Crime>()
         val cursor = queryCrimes(null, null)
-        cursor.use { cursor ->
-            cursor.moveToFirst()
-            while (!cursor.isAfterLast){
-                crimes.add(cursor.getCrime())
-                cursor.moveToNext()
+
+        cursor.use {
+            it.moveToFirst()
+            while (!it.isAfterLast) {
+                crimes.add(it.getCrime())
+                it.moveToNext()
             }
         }
         return crimes
     }
 
     fun getCrime(id: UUID): Crime? {
-        return null
+        val cursor = queryCrimes(
+                CrimeTable.Cols.UUID + " = ?",
+                arrayOf(id.toString())
+        )
+        cursor.use {
+            if (it.count == 0) return null
+            it.moveToFirst()
+            return it.getCrime()
+        }
     }
+
 
     fun addCrime(c: Crime) {
         val values = getContentValues(c)
@@ -68,7 +79,7 @@ class CrimeLab private constructor(private val context: Context) {
             null // orderBy
     )
     */
-    private fun queryCrimes(whereClause: String, whereArgs: Array<String>): CrimeCursorWrapper{
+    private fun queryCrimes(whereClause: String?, whereArgs: Array<String>?): CrimeCursorWrapper {
         val cursor = mDatabase.query(
                 CrimeTable.NAME,
                 null, // columns - 널인 경우 테이블의 모든 열을 의미

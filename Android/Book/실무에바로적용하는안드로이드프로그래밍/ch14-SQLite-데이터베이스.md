@@ -1,6 +1,6 @@
 # Chapter14. SQLite 데이터베이스
 
-안드로이드 장치의 각 애플리케이션은 자신의 **샌드박스(sandbox)**에 디렉토리를 갖는다.  
+안드로이드 장치의 각 애플리케이션은 자신의 **샌드박스(sandbox)** 에 디렉토리를 갖는다.  
 `data/data/패키지이름`
 
 샌드박스에 파일을 저장하면 다른 애플리케이션에서 액세스하는 것을 막아준다. (루팅되지 않은 장치에 한하여)
@@ -262,14 +262,27 @@ class CrimeLab private constructor(private val context: Context) {
     fun getCrimes(): List<Crime> {
         val crimes = arrayListOf<Crime>()
         val cursor = queryCrimes(null, null)
-        cursor.use { cursor ->
-            cursor.moveToFirst()
-            while (!cursor.isAfterLast){
-                crimes.add(cursor.getCrime())
-                cursor.moveToNext()
+
+        cursor.use {
+            it.moveToFirst()
+            while (!it.isAfterLast) {
+                crimes.add(it.getCrime())
+                it.moveToNext()
             }
         }
         return crimes
+    }
+
+    fun getCrime(id: UUID): Crime? {
+        val cursor = queryCrimes(
+                CrimeTable.Cols.UUID + " = ?",
+                arrayOf(id.toString())
+        )
+        cursor.use {
+            if (it.count == 0) return null
+            it.moveToFirst()
+            return it.getCrime()
+        }
     }
 
     /*
@@ -298,8 +311,6 @@ class CrimeLab private constructor(private val context: Context) {
     ...
 }
 ```
-
-
 
 
 ## 애플리테이션 컨텍스트
