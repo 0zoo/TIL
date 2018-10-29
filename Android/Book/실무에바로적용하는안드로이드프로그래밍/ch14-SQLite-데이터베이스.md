@@ -315,5 +315,7 @@ class CrimeLab private constructor(private val context: Context) {
 
 ## 애플리테이션 컨텍스트
 
+메모리를 낭비하는 경우를 방지하기 위해서 애플리케이션 컨텍스트를 사용함.
+
 ## 챌린지: Crime 데이터 삭제하기
 
