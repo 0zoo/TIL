@@ -13,4 +13,14 @@
         <item quantity="one">%1$s crime</item>
         <item quantity="other">%1$s crimes</item>
     </plurals>
+    <string name="crime_suspect_text">용의자 선택</string>
+    <string name="crime_report_text">범죄 보고서 전송</string>
+    <string name="crime_report">%1$s!
+    이 범죄가 발견된 날짜는 %2$s. %3$s, 그리고 %4$s</string>
+    <string name="crime_report_solved">이 건은 해결되었음</string>
+    <string name="crime_report_unsolved">이 건은 미해결임</string>
+    <string name="crime_report_no_suspect">용의자가 없음</string>
+    <string name="crime_report_suspect">용의자는 %s</string>
+    <string name="crime_report_subject">CriminalIntent 범죄 보고서</string>
+    <string name="send_report">범죄 보고서 전송</string>
 </resources>

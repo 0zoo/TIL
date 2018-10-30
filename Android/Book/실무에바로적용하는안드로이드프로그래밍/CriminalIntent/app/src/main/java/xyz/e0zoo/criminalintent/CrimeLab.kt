@@ -18,6 +18,7 @@ class CrimeLab private constructor(private val context: Context) {
             put(CrimeTable.Cols.TITLE, crime.title)
             put(CrimeTable.Cols.DATE, crime.date.time)
             put(CrimeTable.Cols.SOLVED, if (crime.solved) 1 else 0)
+            put(CrimeTable.Cols.SUSPECT, crime.suspect)
         }
     }
 
@@ -68,17 +69,6 @@ class CrimeLab private constructor(private val context: Context) {
                 "${CrimeTable.Cols.UUID} = ?", arrayOf(uuidString))
     }
 
-    /*
-    private fun queryCrimes(whereClause: String, whereArgs: Array<String>): Cursor = mDatabase.query(
-            CrimeTable.NAME,
-            null, // columns - 널인 경우 테이블의 모든 열을 의미
-            whereClause,
-            whereArgs,
-            null, // groupBy
-            null, // having
-            null // orderBy
-    )
-    */
     private fun queryCrimes(whereClause: String?, whereArgs: Array<String>?): CrimeCursorWrapper {
         val cursor = mDatabase.query(
                 CrimeTable.NAME,

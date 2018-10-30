@@ -262,7 +262,14 @@ class CrimeLab private constructor(private val context: Context) {
     fun getCrimes(): List<Crime> {
         val crimes = arrayListOf<Crime>()
         val cursor = queryCrimes(null, null)
-
+        // cursor: 데이터베이스 커서
+        // 쿼리 결과의 특정 지점을 가리킴.
+        // moveToFirst()로 첫 번째 요소로 커서를 이동.
+        // 행의 데이터를 읽음.
+        // moveToNext()로 다음 행으로 커서 이동.
+        // isAfterLast() 쿼리 결과 데이터가 끝났는지 확인.
+        // 잊지 말고 close() 꼭 해줘야 한다. 
+        // (kotlin에서는 closeable를 구현하고 있는 use 사용)
         cursor.use {
             it.moveToFirst()
             while (!it.isAfterLast) {
@@ -312,10 +319,73 @@ class CrimeLab private constructor(private val context: Context) {
 }
 ```
 
+#### 변경된 모델 데이터를 리스트에 반영하기
+
+범죄를 새로 추가하고 Back 버튼을 누르면 CrimeListActivity의 뷰에 새롭게 반영되지 않는 문제점이 있다.  
+CrimeLab이 종전과 다르게 동작하기 때문.
+
+```kotlin
+    inner class CrimeAdapter(private var crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+        ...
+        fun setCrimes(crimes: List<Crime>){
+            this.crimes = crimes
+        }
+    }
+```
+
+CrimeAdapter에 보여줄 데이터를 바꾸기 위해 setCrimes() 추가.
+updateUI()에서 setCrimes() 호출.
+
+```kotlin
+class CrimeListFragment : Fragment() {
+    ...
+    private fun updateUI() {
+        val crimeLab = CrimeLab.get(requireContext())
+        val crimes = crimeLab.getCrimes()
+        
+        if (mAdapter == null) {
+            mAdapter = CrimeAdapter(crimes)
+            mCrimeRecyclerView.adapter = mAdapter
+        } else {
+            mAdapter!!.setCrimes(crimes)
+            mAdapter!!.notifyDataSetChanged()
+        }
+        updateSubtitle()
+    }
+    ...
+}
+```
+
 
 ## 애플리테이션 컨텍스트
+
+```java
+private CrimeLab(Context context){
+    mContext = context.getApplicationContext();
+}
+```
+
+```kotlin
+    private val mContext: Context by lazy {
+        context.applicationContext
+    }
+```
+
+우리 액티비티가 하나라도 존재하면 안드로이드는 **애플리케이션 객체** 도 하나 생성한다.
+
+애플리케이션 객체는 액티비티보다 훨씬 더 긴 생애를 갖는다.
+
+CrimeLab은 싱글톤이기 때문에  
+우리 애플리케이션의 전체 프로세스가 소멸되지 않는 한, 한 번 생성되면 소멸되지 않는다.
+
+CrimeLab이 액티비티의 컨텍스트 참조를 가지면 해당 액티비티는 절대로 GC에 의해 소멸되지 않는다.
 
 메모리를 낭비하는 경우를 방지하기 위해서 애플리케이션 컨텍스트를 사용함.
 
 ## 챌린지: Crime 데이터 삭제하기
 
+범죄 데이터를 삭제하는 `deleteCrime(Crime)`을 CrimeLab에 추가하자.
+이 메서드에서는 `mDatabase.delete()`를 호출한다.
+
+CrimeFragment의 툴바에 Delete Crime 액션 항목을 추가.  
+액션 항목을 클릭하면 `CrimeLab.deleteCrime()`을 호출하고 `finish()`를 호출해 액티비티를 종료시키자.

@@ -11,7 +11,7 @@
         android:text="@string/crime_title_label" />
 
     <EditText
-        android:id="@+id/crimeTitle"
+        android:id="@+id/crimeTitleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/crime_title_hint" />
@@ -31,7 +31,7 @@
         >
 
         <Button
-            android:id="@+id/crimeDate"
+            android:id="@+id/dateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -40,13 +40,43 @@
             />
 
         <CheckBox
-            android:id="@+id/crimeSolved"
+            android:id="@+id/solvedCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/crime_solved_label"
             android:layout_weight="1"
             />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/suspectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/crime_suspect_text"
+            />
+        <Button
+            android:id="@+id/reportButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/crime_report_text"
+            />
+
+        <Button
+            android:id="@+id/suspectDialButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="용의자에게 전화"
+            />
     </LinearLayout>
 
 </LinearLayout>

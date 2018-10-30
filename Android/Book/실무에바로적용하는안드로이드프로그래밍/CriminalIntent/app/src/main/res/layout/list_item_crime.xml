@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <CheckBox
-        android:id="@+id/list_item_crime_solved_check_box"
+        android:id="@+id/solvedCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -13,23 +13,23 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:id="@+id/list_item_crime_title_text_view"
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/list_item_crime_solved_check_box"
+        android:layout_toLeftOf="@id/solvedCheckBox"
         android:textStyle="bold"
         android:padding="4dp"
         tools:text="Crime Title"
-        android:layout_toStartOf="@id/list_item_crime_solved_check_box" />
+        android:layout_toStartOf="@id/solvedCheckBox" />
 
     <TextView
-        android:id="@+id/list_item_crime_date_text_view"
+        android:id="@+id/dateTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/list_item_crime_solved_check_box"
-        android:layout_below="@id/list_item_crime_title_text_view"
+        android:layout_toLeftOf="@id/solvedCheckBox"
+        android:layout_below="@id/titleTextView"
         android:padding="4dp"
         tools:text="Crime Date"
-        android:layout_toStartOf="@id/list_item_crime_solved_check_box" />
+        android:layout_toStartOf="@id/solvedCheckBox" />
 
 </RelativeLayout>

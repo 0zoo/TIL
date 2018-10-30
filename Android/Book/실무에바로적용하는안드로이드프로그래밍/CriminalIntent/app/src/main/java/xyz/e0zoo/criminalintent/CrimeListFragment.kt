@@ -19,7 +19,19 @@ class CrimeListFragment : Fragment() {
     private lateinit var mCrimeRecyclerView: RecyclerView
     private var mAdapter: CrimeAdapter? = null
 
+    private fun updateUI() {
+        val crimeLab = CrimeLab.get(requireContext())
+        val crimes = crimeLab.getCrimes()
 
+        if (mAdapter == null) {
+            mAdapter = CrimeAdapter(crimes)
+            mCrimeRecyclerView.adapter = mAdapter
+        } else {
+            mAdapter!!.setCrimes(crimes)
+            mAdapter!!.notifyDataSetChanged()
+        }
+        updateSubtitle()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,15 +92,6 @@ class CrimeListFragment : Fragment() {
         updateUI()
     }
 
-    private fun updateUI() {
-        if (mAdapter == null) {
-            mAdapter = CrimeAdapter(CrimeLab.get(requireContext()).getCrimes())
-            mCrimeRecyclerView.adapter = mAdapter
-        } else {
-            mAdapter!!.notifyDataSetChanged()
-        }
-        updateSubtitle()
-    }
 
     @SuppressLint("StringFormatMatches")
     private fun updateSubtitle() {
@@ -113,9 +116,9 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
 
             with(itemView) {
-                list_item_crime_title_text_view.text = crime.title
-                list_item_crime_date_text_view.text = crime.date.toString()
-                list_item_crime_solved_check_box.isChecked = crime.solved
+                titleTextView.text = crime.title
+                dateTextView.text = crime.date.toString()
+                solvedCheckBox.isChecked = crime.solved
             }
         }
 
@@ -125,7 +128,7 @@ class CrimeListFragment : Fragment() {
         }
     }
 
-    inner class CrimeAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+    inner class CrimeAdapter(private var crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -136,6 +139,10 @@ class CrimeListFragment : Fragment() {
         override fun getItemCount(): Int = crimes.size
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) = holder.bindCrime(crimes[position])
+
+        fun setCrimes(crimes: List<Crime>){
+            this.crimes = crimes
+        }
 
     }
 
