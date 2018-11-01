@@ -3,9 +3,11 @@ package xyz.e0zoo.criminalintent
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.os.Environment
 import xyz.e0zoo.criminalintent.database.CrimeBaseHelper
 import xyz.e0zoo.criminalintent.database.CrimeCursorWrapper
 import xyz.e0zoo.criminalintent.database.CrimeDbSchema.CrimeTable
+import java.io.File
 import java.util.*
 
 class CrimeLab private constructor(private val context: Context) {
@@ -28,6 +30,13 @@ class CrimeLab private constructor(private val context: Context) {
 
     private val mDatabase: SQLiteDatabase by lazy {
         CrimeBaseHelper(mContext).writableDatabase
+    }
+
+    fun getPhotoFile(crime: Crime): File? {
+        val externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                ?: return null
+
+        return File(externalFilesDir, crime.getPhotoFileName())
     }
 
     fun getCrimes(): List<Crime> {
@@ -81,6 +90,5 @@ class CrimeLab private constructor(private val context: Context) {
         )
         return CrimeCursorWrapper(cursor)
     }
-
 
 }

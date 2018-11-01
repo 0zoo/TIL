@@ -8,32 +8,38 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.ShareCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_crime.*
 import kotlinx.android.synthetic.main.fragment_crime.view.*
+import kotlinx.android.synthetic.main.view_camera_and_title.view.*
+import java.io.File
 import java.util.*
 
 class CrimeFragment : Fragment() {
     private lateinit var mCrime: Crime
     private lateinit var mDateButton: Button
+    private lateinit var mPhotoView: ImageView
 
     companion object {
         const val ARG_CRIME_ID = "crime_id"
         const val DIALOG_DATE = "DialogDate"
         const val REQUEST_DATE = 0
         const val REQUEST_CONTACT = 1
+        const val REQUEST_PHOTO = 2
         const val MY_PERMISSIONS_REQUEST_READ_CONTACTS = 99
 
         fun newInstance(crimeId: UUID): CrimeFragment {
@@ -48,6 +54,10 @@ class CrimeFragment : Fragment() {
 
     private var number: String? = null
     private var id: String? = null
+
+    private val mPhotoFile: File? by lazy {
+        CrimeLab.get(requireActivity()).getPhotoFile(mCrime)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
@@ -79,6 +89,9 @@ class CrimeFragment : Fragment() {
             }
 
             if (!id.isNullOrBlank()) askForContactPermission()
+
+        } else if (requestCode == REQUEST_PHOTO) {
+            updatePhotoView()
         }
     }
 
@@ -130,7 +143,6 @@ class CrimeFragment : Fragment() {
             suspectDialButton.text = number
         }
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v: View = inflater.inflate(R.layout.fragment_crime, container, false)
@@ -199,9 +211,47 @@ class CrimeFragment : Fragment() {
                 val intent = Intent(Intent.ACTION_DIAL, phoneNumber)
                 startActivity(intent)
             }
+
+            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(context.packageManager) != null
+
+            cameraButton.isEnabled = canTakePhoto
+
+            if (canTakePhoto) {
+                //val uri = Uri.fromFile(mPhotoFile)
+                val photoUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", mPhotoFile!!)
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                //startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+
+            }
+
+            cameraButton.setOnClickListener {
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
+
+            mPhotoView = photoImageView
+            updatePhotoView()
+
         }
 
         return v
+    }
+
+    private fun updatePhotoView() {
+
+        val bitmap = mPhotoFile?.let { file ->
+            if (!file.exists())
+                null
+            else
+                PictureUtils.getScaleBitmap(file.path, requireActivity())
+        }
+
+        if (bitmap == null)
+            mPhotoView.setImageDrawable(null)
+        else
+            mPhotoView.setImageBitmap(bitmap)
+
     }
 
 

@@ -6,6 +6,9 @@ data class Crime(val id: UUID = UUID.randomUUID(),
                  var title: String = "",
                  var date: Date = Date(),
                  var solved: Boolean = false,
-                 var suspect: String? = null)
+                 var suspect: String? = null){
+
+    fun getPhotoFileName() = "IMG_${id.toString()}.jpg"
+}
 
 

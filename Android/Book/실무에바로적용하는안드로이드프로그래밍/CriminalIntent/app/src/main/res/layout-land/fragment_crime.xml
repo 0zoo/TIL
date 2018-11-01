@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/view_camera_and_title" />
+
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
