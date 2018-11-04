@@ -1,4 +1,4 @@
-package com.example.a0zoo.githubapi.ui
+    package com.example.a0zoo.githubapi.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
