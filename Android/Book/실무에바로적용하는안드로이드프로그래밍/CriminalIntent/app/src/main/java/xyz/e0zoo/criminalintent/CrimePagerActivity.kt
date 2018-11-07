@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_crime_pager.*
 import java.util.*
 
-class CrimePagerActivity : AppCompatActivity() {
+class CrimePagerActivity : AppCompatActivity(), CrimeFragment.Callbacks {
+    override fun onCrimeUpdated(crime: Crime) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     companion object {
         private val EXTRA_CRIME_ID = "${CrimePagerActivity::class.java.`package`.name}.crime_id"

@@ -1,11 +1,13 @@
 package xyz.e0zoo.criminalintent
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_crime_list.view.*
 import kotlinx.android.synthetic.main.list_item_crime.view.*
@@ -19,7 +21,25 @@ class CrimeListFragment : Fragment() {
     private lateinit var mCrimeRecyclerView: RecyclerView
     private var mAdapter: CrimeAdapter? = null
 
-    private fun updateUI() {
+    private var mCallbacks: Callbacks? = null
+
+    interface Callbacks{
+        fun onCrimeSelected(crime: Crime)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mCallbacks = activity as Callbacks
+        Log.i("CrimeListFragment", "onAttach() call")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mCallbacks = null
+        Log.i("CrimeListFragment", "onDetach() call")
+    }
+
+    fun updateUI() {
         val crimeLab = CrimeLab.get(requireContext())
         val crimes = crimeLab.getCrimes()
 
@@ -53,7 +73,11 @@ class CrimeListFragment : Fragment() {
             R.id.menu_item_new_crime -> {
                 val crime = Crime()
                 CrimeLab.get(requireContext()).addCrime(crime)
-                startActivity(CrimePagerActivity.newIntent(requireContext(), crime.id))
+
+                //startActivity(CrimePagerActivity.newIntent(requireContext(), crime.id))
+                updateUI()
+                mCallbacks?.onCrimeSelected(crime)
+
                 true
             }
             R.id.menu_item_show_subtitle -> {
@@ -123,8 +147,9 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View) {
-            val intent = CrimePagerActivity.newIntent(this@CrimeListFragment.requireContext(), crime.id)
-            startActivity(intent)
+            //val intent = CrimePagerActivity.newIntent(this@CrimeListFragment.requireContext(), crime.id)
+            //startActivity(intent)
+            mCallbacks?.onCrimeSelected(crime)
         }
     }
 
@@ -145,6 +170,5 @@ class CrimeListFragment : Fragment() {
         }
 
     }
-
 
 }

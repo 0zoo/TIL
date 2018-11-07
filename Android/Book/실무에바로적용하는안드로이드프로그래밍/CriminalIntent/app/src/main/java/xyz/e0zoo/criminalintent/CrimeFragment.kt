@@ -2,6 +2,7 @@ package xyz.e0zoo.criminalintent
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,6 +18,7 @@ import android.support.v4.content.FileProvider
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +61,29 @@ class CrimeFragment : Fragment() {
         CrimeLab.get(requireActivity()).getPhotoFile(mCrime)
     }
 
+    private var mCallbacks: Callbacks? = null
+
+    private fun updateCrime(){
+        CrimeLab.get(requireActivity()).updateCrime(mCrime)
+        mCallbacks?.onCrimeUpdated(mCrime)
+    }
+
+    interface Callbacks{
+        fun onCrimeUpdated(crime: Crime)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mCallbacks = activity as Callbacks
+        Log.i("CrimeFragment", "onAttach() call")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mCallbacks = null
+        Log.i("CrimeFragment", "onDetach() call")
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
 
@@ -67,6 +92,7 @@ class CrimeFragment : Fragment() {
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             mCrime.date = date
             updateDate()
+            updateCrime()
 
         } else if (requestCode == REQUEST_CONTACT && data != null) {
 
@@ -84,6 +110,7 @@ class CrimeFragment : Fragment() {
                 val suspect = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                 id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID))
 
+                updateCrime()
                 mCrime.suspect = suspect
                 suspectButton.text = suspect
             }
@@ -92,6 +119,7 @@ class CrimeFragment : Fragment() {
 
         } else if (requestCode == REQUEST_PHOTO) {
             updatePhotoView()
+            updateCrime()
         }
     }
 
@@ -149,9 +177,9 @@ class CrimeFragment : Fragment() {
 
         with(v) {
 
-            crimeTitleEditText.setText(mCrime.title)
+            titleEditText.setText(mCrime.title)
 
-            crimeTitleEditText.addTextChangedListener(object : TextWatcher {
+            titleEditText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                 }
 
@@ -160,6 +188,7 @@ class CrimeFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     mCrime.title = s.toString()
+                    updateCrime()
                 }
             })
 
@@ -178,6 +207,7 @@ class CrimeFragment : Fragment() {
 
             solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 mCrime.solved = isChecked
+                updateCrime()
             }
 
             reportButton.setOnClickListener {
