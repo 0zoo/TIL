@@ -20,6 +20,12 @@ class BeatBoxFragment : Fragment() {
         BeatBox(requireActivity())
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        retainInstance = true
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_beat_box, container, false)
 
@@ -30,23 +36,36 @@ class BeatBoxFragment : Fragment() {
         return view
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mBeatBox.release()
+    }
 
-    private class SoundHolder(inflater: LayoutInflater, container: ViewGroup?)
-        : RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_sound, container, false)) {
+
+    inner class SoundHolder(inflater: LayoutInflater, container: ViewGroup?)
+        : RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_sound, container, false)),
+            View.OnClickListener {
 
         private val mButton: Button = itemView.soundButton
         private lateinit var mSound: Sound
+
+        init {
+            mButton.setOnClickListener(this)
+        }
 
         fun bindSound(sound: Sound){
             mSound = sound
             mButton.text = mSound.name
         }
 
+        override fun onClick(v: View?) {
+            mBeatBox.play(mSound)
+        }
     }
 
 
 
-    private class SoundAdapter(val mSounds: List<Sound>) : RecyclerView.Adapter<SoundHolder>() {
+    inner class SoundAdapter(private val mSounds: List<Sound>) : RecyclerView.Adapter<SoundHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SoundHolder {
             val inflater = LayoutInflater.from(parent.context)
