@@ -119,22 +119,48 @@ XML drawable은 화면 밀도와는 상관 없기 때문에 한 번만 정의하
     - 중앙: 검은색
     - 테두리: 투명
 
+
+![](https://t1.daumcdn.net/cfile/tistory/2522E24359375D3E31)
+
+나인 패치(9-Patch)에서는 이미지가 늘어나야 할 영역에 대한 정보를 저장하기 위해 원본이미지(image.png) 크기에서 상/하/좌/우 각각 1픽셀(pixel) 씩 늘린 이미지(image.9.png)를 새로 만듭니다. 그리고 위(Top) 1픽셀(pixel) 라인에는 가로로 늘어날 영역을 기록하고, 왼쪽(Left) 1픽셀(pixel) 라인에는 세로로 늘어날 영역을 기록합니다. 이 때, 늘어나야 할 영역은 BLACK(0xFF000000)으로 채우고, 그렇지 않은 영역은 WHITE(0xFFFFFFFF) 또는 TRANSPARENT(0x00XXXXXX)로 채웁니다.
+
+출처: http://recipes4dev.tistory.com/131?category=635576 [개발자를 위한 레시피]
+
+
+
 안드로이드 SDK의 **draw9patch** 도구를 사용하자.
 
-1. 이미지 파일 이름 변경  
-`ic_button_beat_box_default.9.png`
-2. 아래쪽의 9-patch 탭 클릭
+- bottom / rignt 로 콘텐츠 영역을 지정.
 
-
+![](https://t1.daumcdn.net/cfile/tistory/270E013459375D3D0C)
 
 ![screenshot_1542202835](https://user-images.githubusercontent.com/38287485/48486251-57a80880-e85e-11e8-959f-6ed3d0eedab6.png)
 
 
-http://recipes4dev.tistory.com/132
 
 https://developer.android.com/studio/write/draw9patch?hl=ko
 
 
 ## Mipmap 이미지
+
+(-mdpi, -hdpi 등) 리소스 관리 시스템은 문제점이 있음.
+
+APK 파일에는 화면 밀도마다 저장했던 모든 이미지 파일들이 포함된다.
+
+이런 과대포장을 해결하기 위해 화면 밀도별 APK 생성 가능. (mdpi APK, hdpi APK, ...)
+
+예외!  
+**launcher icon** 
+
+
+론처 아이콘은 **mipmap** 리소스로 사용하도록 하자.
+
+APK 분할시 mipmap은 분할 안됨.
+
+
+- 론처 아이콘은 mipmap에 나머지는 drawable에
+
+
+
 
 
