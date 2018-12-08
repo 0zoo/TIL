@@ -9,15 +9,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
 import kotlinx.android.synthetic.main.fragment_photo_gallery.view.*
-import java.io.IOException
 import java.lang.ref.WeakReference
 
 class PhotoGalleryFragment : Fragment() {
 
     private lateinit var mPhotoRecyclerView: RecyclerView
     private var mItems: List<GalleryItem> = arrayListOf()
+    private lateinit var mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
 
     companion object {
         const val TAG = "PhotoGalleryFragment"
@@ -30,6 +30,17 @@ class PhotoGalleryFragment : Fragment() {
         super.onCreate(savedInstanceState)
         retainInstance = true
         FetchItemsTask(this).execute()
+
+        mThumbnailDownloader = ThumbnailDownloader()
+        mThumbnailDownloader.start()
+        mThumbnailDownloader.looper
+        Log.i(TAG, "Background Thread started.")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mThumbnailDownloader.quit()
+        Log.i(TAG, "Background Thread destroyed.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,23 +76,29 @@ class PhotoGalleryFragment : Fragment() {
 
         override fun onPostExecute(result: List<GalleryItem>?) {
             reference.get()?.let {
-                if(it.isRemoving) return
+                if (it.isRemoving) return
                 it.mItems = result ?: return
                 it.setupAdapter()
             }
         }
     }
 
-    private class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mTitleTextView = itemView as TextView
+    inner class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mImageView = itemView.findViewById(R.id.imageView) as ImageView
         fun bindGalleryItem(item: GalleryItem) {
-            mTitleTextView.text = item.caption
+            GlideApp.with(itemView)
+                .load(item.url)
+                .into(mImageView)
+
         }
     }
 
-    private class PhotoAdapter(val items: List<GalleryItem>) : RecyclerView.Adapter<PhotoHolder>() {
+    inner class PhotoAdapter(val items: List<GalleryItem>) : RecyclerView.Adapter<PhotoHolder>() {
+
         override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): PhotoHolder {
-            return PhotoHolder(TextView(viewGroup.context))
+            val inflater = LayoutInflater.from(viewGroup.context)
+            val view = inflater.inflate(R.layout.gallery_item, viewGroup, false)
+            return PhotoHolder(view)
         }
 
         override fun getItemCount(): Int = items.size
@@ -89,8 +106,8 @@ class PhotoGalleryFragment : Fragment() {
         override fun onBindViewHolder(photoHolder: PhotoHolder, position: Int) {
             val item = items[position]
             photoHolder.bindGalleryItem(item)
+            mThumbnailDownloader.queueThumbnail(photoHolder, item.url)
         }
-
     }
 
 

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 
 abstract class SingleFragmentActivity : AppCompatActivity() {
 
@@ -26,3 +28,6 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
         }
     }
 }
+
+@GlideModule
+class ChatAppGlideModule : AppGlideModule()
