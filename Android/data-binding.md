@@ -82,5 +82,45 @@ binding.setContent(model);
     - 이벤트가 발생할 때 리스너 구현 생성됨. (비동기 적합)
 
 -----
+참고:
+https://developer.android.com/topic/libraries/data-binding/?hl=ko
+
+```
+android:text="@{viewmodel.currentRandomFruitName}"
+```
+
+리스너 바인딩
+
+```
+android:onClick="@{() -> viewmodel.onChangeRandomFruitClick()}"
+```
+
+```
+android:text="@={viewmodel.editTextContent}"
+```
+
+`@={...}` -> two-way databinding
+
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+   super.onCreate(savedInstanceState);
+   MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
+   User user = new User("Test", "User");
+   binding.setUser(user);
+}
+```
+
+기본적으로, Binding 클래스는 레이아웃 파일의 이름을 기준으로 생성되어 파일 이름을 파스칼 표기법으로 변환하고 그 뒤에 "Binding"을 접미사로 붙입니다.
+
+
+
+
+
+
+
+
+
 
 
