@@ -1,5 +1,6 @@
 package xyz.e0zoo.sunset
 
+import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.os.Bundle
@@ -20,6 +21,8 @@ class SunsetFragment : Fragment() {
     private val mSunsetSkyColor: Int by lazy { ContextCompat.getColor(requireContext(), R.color.sunset_sky) }
     private val mNightSkyColor: Int by lazy { ContextCompat.getColor(requireContext(), R.color.night_sky) }
 
+    private var flag = false
+
 
     companion object {
         fun newInstance() = SunsetFragment()
@@ -32,7 +35,10 @@ class SunsetFragment : Fragment() {
         mSkyView = view.findViewById(R.id.sky)
 
         mSceneView.setOnClickListener {
-            startAnimation()
+            if(flag)
+                reverseAnimation()
+            else
+                startAnimation()
         }
 
         return view
@@ -41,6 +47,7 @@ class SunsetFragment : Fragment() {
     private fun startAnimation() {
         val sunYStart: Float = mSunView.top.toFloat()
         val sunYEnd: Float = mSkyView.height.toFloat()
+
         val heightAnimator: ObjectAnimator = ObjectAnimator
             .ofFloat(mSunView, "y", sunYStart, sunYEnd)
             .setDuration(3000)
@@ -48,7 +55,7 @@ class SunsetFragment : Fragment() {
                 interpolator = AccelerateInterpolator()
             }
 
-        heightAnimator.start()
+        //heightAnimator.start()
 
         val sunsetSkyAnimator = ObjectAnimator
             .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)
@@ -57,9 +64,62 @@ class SunsetFragment : Fragment() {
                 setEvaluator(ArgbEvaluator())
             }
 
-        sunsetSkyAnimator.start()
+        //sunsetSkyAnimator.start()
+
+        val nightSkyAnimator = ObjectAnimator
+            .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mNightSkyColor)
+            .setDuration(1500)
+            .apply {
+                setEvaluator(ArgbEvaluator())
+            }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.play(heightAnimator)
+            .with(sunsetSkyAnimator)
+            .before(nightSkyAnimator)
+
+        animatorSet.start()
+
+        flag = true
 
     }
+
+    private fun reverseAnimation(){
+        val sunYStart: Float = mSkyView.height.toFloat()
+        val sunYEnd: Float = mSunView.top.toFloat()
+
+        val heightAnimator: ObjectAnimator = ObjectAnimator
+            .ofFloat(mSunView, "y", sunYStart, sunYEnd)
+            .setDuration(3000)
+            .apply {
+                interpolator = AccelerateInterpolator()
+            }
+
+        val sunsetSkyAnimator = ObjectAnimator
+            .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)
+            .setDuration(3000)
+            .apply {
+                setEvaluator(ArgbEvaluator())
+            }
+
+        val nightSkyAnimator = ObjectAnimator
+            .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mBlueSkyColor)
+            .setDuration(1500)
+            .apply {
+                setEvaluator(ArgbEvaluator())
+            }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.play(heightAnimator)
+            .with(sunsetSkyAnimator)
+            .before(nightSkyAnimator)
+
+        animatorSet.start()
+
+        flag = false
+
+    }
+
 
 }
 
