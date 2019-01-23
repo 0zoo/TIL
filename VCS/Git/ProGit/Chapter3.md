@@ -239,17 +239,97 @@ Merge 도구를 종료하고 잘 마쳤다고 입력하면
 
 ## 브랜치 관리
 
-p.91
+
+```
+브랜치 목록 보여주기
+
+$ git branch
+```
+
+`*`가 붙어 있는 브랜치는 현재 작업 중인 브랜치를 나타냄.
+
+
+```
+(브랜치 + 마지막 커밋 메시지) 목록
+
+$ git branch -v
+```
+
+```
+이미 merge한 브랜치 목록
+
+$ git branch --merged
+
+(*가 붙지 않은 브랜치는 이미 merge했기 때문에 삭제해도 정보를 잃지 않음. 삭제해도 되는 브랜치)
+$ git branch -d iss53
+```
+
+```
+현재 checkout 브랜치에 merge하지 않은 브랜치 목록
+$ git branch --no-merged
+
+아직 merge하지 않은 커밋을 담고 있어 -d 옵션으로 삭제 불가
+강제로 삭제하려면 -D옵션 
+$ git branch -D testing
+```
 
 ## 브랜치 Workflow
 
 ### Long-Running 브랜치
 
+**Long-Running** 브랜치
+- 브랜치를 이용해 여러 단계에 걸쳐서 안정화해 나아가면서 충분히 안정화가 됐을 때 안정 브랜치로 Merge.
+- 특히 규모가 크고 복잡한 프로젝트일수록 유용하게 사용
+- 안정적인 브랜치일수록 커밋 히스토리가 뒤쳐진다.
+
+
+![](https://user-images.githubusercontent.com/38287485/51586561-12b8e600-1f21-11e9-9021-2f1ff5b5fe64.png)
+
+
 ### 토픽 브랜치
+
+**토픽** 브랜치
+- 한 가지 주제나 작업을 위해 만든 짧은 호흡의 브랜치
+- 프로젝트 크기 상관없이 유용
+
+![](https://user-images.githubusercontent.com/38287485/51587336-d3d85f80-1f23-11e9-9d6f-83349a14ba6b.png)
+
+`iss91v2` 브랜치와 `dumbidea` 브랜치만 Merge.
+
+![](https://user-images.githubusercontent.com/38287485/51587342-d5a22300-1f23-11e9-874d-84460e8b6aa8.png)
+
+
+지금까지 한 모든 작업은 로컬에서만 처리. 서버 통신 X
+
 
 ## 리모트 브랜치
 
+Remote Refs는  리모트 저장소에 있는 포인터인 레퍼런스  
+
+리모트 저장소에 있는 브랜치, 태그, 등등을 의미한다.  
+
+```
+모든 리모트 Refs 조회
+$ git ls-remote (remote)
+
+모든 리모트 브랜치와 그 정보를 보여줌
+$ git remote show (remote)
+```
+
+보통 Remote Refs보다 **Remote Tracking** 브랜치를 사용한다.  
+
+**Remote Tracking** 브랜치:
+- 리모트 브랜치를 추적하는 브랜치
+- 로컬에 있지만 움직일 수 없다.
+- 일종의 북마크
+- 리모트 저장소에 마지막으로 연결했던 순간에 브랜치가 무슨 커밋을 가리키고 있었는지를 나타낸다.
+
+****
+
+
+
 ### Push하기
+
 
 ### 브랜치 주석
 
