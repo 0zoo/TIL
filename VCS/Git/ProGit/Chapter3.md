@@ -324,11 +324,37 @@ $ git remote show (remote)
 - 일종의 북마크
 - 리모트 저장소에 마지막으로 연결했던 순간에 브랜치가 무슨 커밋을 가리키고 있었는지를 나타낸다.
 
-****
+**리모트 브랜치**:
+- `(remote)/(branch)` 형식
 
 
+**origin**의 의미: `git clone` 명령이 자동으로 만들어주는 리모트 이름. clone할 때 `-o` 옵션으로 원하는 리모트 저장소 이름 설정 가능함.
+
+
+```
+리모트 서버로부터 저장소 정보를 동기화
+$ git fetch origin
+
+서버의 데이터를 로컬에 업데이트, origin/master 포인터 위치를 최신 커밋으로 이동
+```
+
+리모트 저장소를 여러 개 운영하는 경우?  
+
+새로운 리모트 저장소 주소: `git.team1.ourcompany.com `
+이름: `team-one`
+
+![](https://user-images.githubusercontent.com/38287485/51729402-e767ff80-20b6-11e9-9ee2-665975548db9.png)
+
+![](https://user-images.githubusercontent.com/38287485/51729519-7117cd00-20b7-11e9-89a7-7d6bbdb8c3ff.png)
+
+$ `git fetch teamone`은 리모트 트래킹 브랜치 teamone/master가 teamone 서버의 master 브랜치가 가
+리키는 커밋을 가리키게 한다. (teamone 서버의 데이터는 모두 origin 서버에도 있는 것들이라서 아무것도 내려받지 않는다)
 
 ### Push하기
+
+```
+$ git push (remote) (branch)
+```
 
 
 ### 브랜치 주석
