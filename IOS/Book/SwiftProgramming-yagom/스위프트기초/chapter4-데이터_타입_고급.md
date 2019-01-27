@@ -156,11 +156,137 @@ var numbers = [100, 200, 300] // 타입 추론시 Array 타입으로 추론함.
 - 정해진 값 외에는 입력받고 싶지 않을 때
 - 예상된 입력 값이 한정되어 있을 때
 
+
+열거형 각각이 고유의 타입으로 인정. -> 버그 발생 가능성 원천 봉쇄
+
+- 원시 값
+- 연관 값
+
+
+(옵셔널은 enum으로 구현되어 있음)
+
 ### 4.5.1 기본 열거형
+
+```swift
+enum School {
+    case elementary
+    case middle
+    case high
+}
+
+enum School {
+    case elementary, middle, high
+}
+```
+ 
+- 열거형의 각 항목은 그 자체가 고유의 값이다.
+
+```swift
+var educationLevel: School = School.high
+
+var educationLevel: School = .high
+```
 
 ### 4.5.2 원시 값
 
+열거형 이름 오른쪽에 타입 명시
+
+`rawValue` 프로퍼티로 원시 값 사용
+
+```swift
+enum WeekDays: Character {
+    case mon = "월", tue = "화", wed = "수", thu = "목", fri = "금", sat = "토", sun = "일"
+}
+
+// WeekDays.mon.rawValue : 월
+```
+
+만약, 일부 항목만 원시 값을 지정했다면  
+지정하지 않았다면 문자열의 경우 항목의 이름이 원시 값이 되고  
+정수 타입이라면 첫 항목을 기준으로 0부터 1씩 늘어난 값을 가짐.
+
+```swift
+enum Numbers: Int {
+    case zero, one, two, ten = 10
+}
+// 0, 1, 2, 10
+```
+
+```swift
+// 원시 값을 통한 열거형 초기화 (원시 값 정보를 안다면)
+let one = Numbers(rawValue: 1) // one
+let three = Numbers(rawValue: 3) // nil
+```
+
 ### 4.5.3 연관 값
 
+```swift
+enum MainDish {
+    case pasta(taste: String)
+    case pizza(dough: String, topping: String)
+    case chicken(withSauce: Bool)
+    case rice
+}
+var dinner: MainDish = MainDish.pasta(taste: "크림")
+```
+
+```swift
+enum PastaTaste {
+    case cream, tomato
+}
+
+enum MainDish {
+    case pasta(taste: PastaTaste)
+}
+var dinner: MainDish = MainDish.pasta(taste: PastaTaste.tomato)
+```
+
 ### 4.5.4 순환 열거형
+
+연관 값이 열거형 자신의 값이고자 할 때 사용.
+
+순환 알고리즘 구현시 유용.
+
+`indirect` 키워드 사용.
+- 특정 항목에만 한정: `indirect case`
+- 열거형 전체에 적용: `indirect enum`
+
+```swift
+enum Expression {
+    case number(Int)
+    indirect case addition(Expression, Expression)
+    indirect case multiplication(Expression, Expression)
+}
+
+indirect enum Expression {
+    case number(Int)
+    case addition(Expression, Expression)
+    case multiplication(Expression, Expression)
+}
+```
+
+```swift
+let five = Expression.number(5)
+let two = Expression.number(2)
+
+let sum = Expression.addition(five, two)
+
+let final = Expression.multiplication(sum, Expression.number(3))
+
+fun evaluate(_ expression: Expression) -> Int {
+    switch expression {
+        case .number(let value):
+            return value
+        case .addition(let left, let right):
+            return evaluate(left) + evaluate(right)
+        case .multiplication(let left, let right):
+            return evaluate(left) * evaluate(right)    
+    }
+}
+
+let result: Int = evaluate(final)
+// (5+2)*3
+```
+
+
 
