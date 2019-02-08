@@ -11,3 +11,55 @@
 
 - 컴퓨터 시스템을 편리하게 사용할 수 있는 환경 제공
 - 컴퓨터 시스템의 **자원을 효율적으로 관리**
+
+빠르게 짧은 시간동안 CPU를 번갈아 할당.
+
+## 운영체제의 분류
+
+- 동시 작업 가능 여부 
+    - single tasking : 한 번에 하나의 작업만 처리
+    - **multi tasking** : 동시에 두 개 이상의 작업 처리
+
+- 사용자의 수 
+    - single user (MS-DOS, MS Windows, ...)
+    - **multi user** (UNIX, NT Server, ...)
+
+- 처리 방식
+    - 일괄 처리 (batch processing): 요즘엔 거의 사용 X
+        - interactive X. 작업을 모아서 한 번에 처리.
+        - 작업이 완전 종료될 때까지 기다려야 한다. 
+    - **시분할 (time sharing)**
+        - interactive한 방식
+        - 여러 작업 수행시 자원을 일정한 시간 단위로 분할하여 사용
+        - 짧은 응답 시간
+        - dead line 없음
+    - 실시간 (Realtime OS)
+        - dead line이 있음. 정해진 시간 안에 처리되는 것이 보장.
+        - 예) 원자로, 미사일, 반도체, 로토트 ...
+        - **Hard realtime system** : 데드라인 안지키면 치명적인 결과를 초래하는.
+        - **Soft realtime system** : 비교적 덜 치명적인
+        
+실제 우리가 사용하는 프로그램의 대부분은 시분할 방식을 사용함. 
+
+실시간 서버를 지원하는 모바일 앱이 많이 증가하는 추세이기 때문에 어떻게 처리해주어야 하는 이슈.
+
+**Multiprocessor**: CPU가 여러 개. 하드웨어적으로 다른
+
+
+- UNIX(Linux), DOS, MS Windows, ...
+
+
+## 운영체제의 구조
+
+- CPU 스케줄링
+- 메모리 관리
+- Disk 스케줄링 (파일 관리)
+- 입출력 관리
+
+- 프로세스 관리
+
+
+
+
+
+
