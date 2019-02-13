@@ -1,7 +1,3 @@
-
-https://core.ewha.ac.kr/publicview/C0101020140311132925816476?vmode=f
-
-
 ![](https://user-images.githubusercontent.com/38287485/52633663-7b83f480-2f08-11e9-87c3-de2a41d6a47a.png)
 
 ![](https://user-images.githubusercontent.com/38287485/52633668-7e7ee500-2f08-11e9-8c08-d8bf1fe9e600.png)
